@@ -1,0 +1,93 @@
+package com.aicodinginterviewprep;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.TargetDataLine;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
+/**
+ * Captures audio from the system microphone on a background thread and hands
+ * back a WAV byte array once recording stops, ready to send to a transcription API.
+ */
+public class MicrophoneRecorder {
+    private static final AudioFormat AUDIO_FORMAT = new AudioFormat(16000f, 16, 1, true, false);
+    private static final int BUFFER_SIZE = 4096;
+
+    private TargetDataLine line;
+    private ByteArrayOutputStream capturedAudio;
+    private Thread captureThread;
+    private volatile boolean recording;
+
+    public void startRecording() throws LineUnavailableException {
+        startRecording(openDefaultLine());
+    }
+
+    void startRecording(TargetDataLine line) throws LineUnavailableException {
+        if (recording) {
+            throw new IllegalStateException("Already recording.");
+        }
+
+        this.line = line;
+        line.open(AUDIO_FORMAT);
+        line.start();
+        capturedAudio = new ByteArrayOutputStream();
+        recording = true;
+
+        captureThread = new Thread(this::captureLoop, "microphone-capture");
+        captureThread.setDaemon(true);
+        captureThread.start();
+    }
+
+    public byte[] stopRecording() throws InterruptedException {
+        if (!recording) {
+            throw new IllegalStateException("Not currently recording.");
+        }
+
+        recording = false;
+        line.stop();
+        captureThread.join();
+        line.close();
+
+        return toWavBytes(capturedAudio.toByteArray());
+    }
+
+    public boolean isRecording() {
+        return recording;
+    }
+
+    private void captureLoop() {
+        byte[] chunk = new byte[BUFFER_SIZE];
+        while (recording) {
+            int bytesRead = line.read(chunk, 0, chunk.length);
+            if (bytesRead > 0) {
+                capturedAudio.write(chunk, 0, bytesRead);
+            }
+        }
+    }
+
+    static byte[] toWavBytes(byte[] pcmData) {
+        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
+             AudioInputStream audioInputStream = new AudioInputStream(
+                 new ByteArrayInputStream(pcmData), AUDIO_FORMAT, pcmData.length / AUDIO_FORMAT.getFrameSize())) {
+            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    private static TargetDataLine openDefaultLine() throws LineUnavailableException {
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, AUDIO_FORMAT);
+        if (!AudioSystem.isLineSupported(info)) {
+            throw new LineUnavailableException("No microphone input is available on this system.");
+        }
+        return (TargetDataLine) AudioSystem.getLine(info);
+    }
+}

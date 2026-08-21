@@ -239,6 +239,22 @@
     -fx-effect: none;
 }
 
+.button.recording {
+    -fx-background-color: #d9564a;
+    -fx-text-fill: #fff8f5;
+    -fx-border-color: #7a231b;
+}
+
+.button.recording:hover {
+    -fx-background-color: #c74a3e;
+}
+
+.voice-status-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6b6157;
+    -fx-font-style: italic;
+}
+
 /* ---------- Progress Bars ---------- */
 
 .progress-bar {

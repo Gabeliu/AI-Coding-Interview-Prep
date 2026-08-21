@@ -33,11 +33,16 @@
 
    <!-- ===== Explanation (fills the remaining space) ===== -->
    <center>
-      <VBox>
+      <VBox spacing="4">
          <padding>
             <Insets bottom="8" left="8" right="8" top="8" />
          </padding>
-         <Label styleClass="section-label" text="Your explanation" />
+         <HBox alignment="CENTER_LEFT" spacing="10">
+            <Label styleClass="section-label" text="Your explanation" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="buttonVoiceInput" disable="true" mnemonicParsing="false" onAction="#onVoiceInput" text="Record Answer" />
+         </HBox>
+         <Label fx:id="labelVoiceStatus" styleClass="voice-status-label" />
          <TextArea fx:id="answerInput" disable="true" prefHeight="633.0" prefRowCount="20" promptText="Generate a question first to start answering." wrapText="true" VBox.vgrow="ALWAYS" />
       </VBox>
    </center>
