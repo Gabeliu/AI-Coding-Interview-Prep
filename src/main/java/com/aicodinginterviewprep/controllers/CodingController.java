@@ -6,20 +6,31 @@ import com.aicodinginterviewprep.SceneManager;
 import com.aicodinginterviewprep.service.OpenAiQuestionService;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import org.fxmisc.flowless.VirtualizedScrollPane;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
 
 public class CodingController implements SceneAware {
-    private static final String STARTER_CODE = "// Write your code here";
+    private static final String PLACEHOLDER_TEXT = "// Write your code here";
 
     private final OpenAiQuestionService questionService = new OpenAiQuestionService();
     private SceneManager sceneManager;
 
     public BorderPane codingRoot;
     public TextArea questionOutput;
-    public TextArea codeEditor;
+    public CodeArea codeEditor;
+    public Label codePlaceholder;
 
+    @FXML public StackPane codeEditorContainer;
     @FXML public Button buttonReturn;
     @FXML public Button buttonSubmitAnswer;
     @FXML public Button buttonGenerateQuestion;
@@ -28,13 +39,36 @@ public class CodingController implements SceneAware {
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
+        setUpCodeEditor();
+    }
+
+    private void setUpCodeEditor() {
+        codeEditor = new CodeArea();
+        codeEditor.setParagraphGraphicFactory(LineNumberFactory.get(codeEditor));
+        codeEditor.getStyleClass().add("code-editor");
+
+        codePlaceholder = new Label(PLACEHOLDER_TEXT);
+        codePlaceholder.getStyleClass().add("code-editor-placeholder");
+        codePlaceholder.setMouseTransparent(true);
+        StackPane.setAlignment(codePlaceholder, Pos.TOP_LEFT);
+        StackPane.setMargin(codePlaceholder, new Insets(1, 0, 0, 54));
+
+        codeEditor.textProperty().addListener((observable, oldText, newText) -> {
+            codePlaceholder.setVisible(newText.isEmpty());
+            codeEditor.setStyleSpans(0, JavaSyntaxHighlighter.computeHighlighting(newText));
+        });
+
+        VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(codeEditor);
+        VBox.setVgrow(scrollPane, Priority.ALWAYS);
+
+        codeEditorContainer.getChildren().setAll(scrollPane, codePlaceholder);
     }
 
     @FXML
     public void onGenerateQuestion() {
         buttonGenerateQuestion.setDisable(true);
         questionOutput.setText("Generating question...");
-        codeEditor.setText(STARTER_CODE);
+        codeEditor.clear();
 
         Task<String> task = new Task<>() {
             @Override
@@ -78,7 +112,7 @@ public class CodingController implements SceneAware {
         if (!(controller instanceof FeedbackController feedbackController)) {
             return;
         }
-        feedbackController.setAnswerControls(questionOutput, codeEditor, null, "coding");
+        feedbackController.setAnswerControls(questionOutput.getText(), codeEditor.getText(), "", "coding");
         feedbackController.runEvaluation();
     }
 }

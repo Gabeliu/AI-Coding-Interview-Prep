@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import com.aicodinginterviewprep.service.OpenAiQuestionService;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 class CodingControllerTest {
@@ -71,7 +71,7 @@ class CodingControllerTest {
         CodingController controller = new CodingController();
 
         controller.questionOutput = new TextArea();
-        controller.codeEditor = new TextArea();
+        controller.codeEditorContainer = new StackPane();
 
         controller.buttonReturn = new Button();
         controller.buttonSubmitAnswer = new Button();
@@ -79,6 +79,50 @@ class CodingControllerTest {
         controller.buttonPractice = new Button();
 
         return controller;
+    }
+
+    @Test
+    void setSceneManager_buildsCodeEditorWithVisiblePlaceholderInitially() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            assertEquals("", controller.codeEditor.getText());
+            assertTrue(controller.codePlaceholder.isVisible());
+            assertTrue(controller.codeEditorContainer.getChildren().contains(controller.codePlaceholder));
+        });
+    }
+
+    @Test
+    void typingInCodeEditorHidesPlaceholderAndAppliesHighlighting() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.codeEditor.replaceText("public class Foo {}");
+
+            assertFalse(controller.codePlaceholder.isVisible());
+            assertTrue(
+                controller.codeEditor.getStyleSpans(0, controller.codeEditor.getLength())
+                    .styleStream()
+                    .anyMatch(style -> style.contains("code-keyword"))
+            );
+        });
+    }
+
+    @Test
+    void clearingCodeEditorShowsPlaceholderAgain() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.codeEditor.replaceText("int x;");
+            assertFalse(controller.codePlaceholder.isVisible());
+
+            controller.codeEditor.clear();
+
+            assertTrue(controller.codePlaceholder.isVisible());
+        });
     }
 
     @Test
@@ -130,9 +174,9 @@ class CodingControllerTest {
 
             controller.runEvaluation();
 
-            assertEquals(controller.questionOutput, feedbackController.receivedQuestionOutput);
-            assertEquals(controller.codeEditor, feedbackController.receivedCodeEditor);
-            assertNull(feedbackController.receivedAnswerInput);
+            assertEquals(controller.questionOutput.getText(), feedbackController.receivedQuestion);
+            assertEquals(controller.codeEditor.getText(), feedbackController.receivedCode);
+            assertEquals("", feedbackController.receivedExplanation);
             assertEquals("coding", feedbackController.receivedReturnScene);
         });
     }
@@ -180,7 +224,7 @@ class CodingControllerTest {
     }
 
     @Test
-    void onGenerateQuestion_resetsCodeEditorToStarterCode() throws Exception {
+    void onGenerateQuestion_clearsCodeEditorAndShowsPlaceholderAgain() throws Exception {
         BlockingQuestionService service = new BlockingQuestionService();
 
         runOnFxThreadAndWait(() -> {
@@ -188,11 +232,13 @@ class CodingControllerTest {
             controller.setSceneManager(new FakeSceneManager());
             setQuestionService(controller, service);
 
-            controller.codeEditor.setText("public int[] mySolution() { return null; }");
+            controller.codeEditor.replaceText("public int[] mySolution() { return null; }");
+            assertFalse(controller.codePlaceholder.isVisible());
 
             controller.onGenerateQuestion();
 
-            assertEquals("// Write your code here", controller.codeEditor.getText());
+            assertEquals("", controller.codeEditor.getText());
+            assertTrue(controller.codePlaceholder.isVisible());
         });
 
         service.release();
@@ -324,23 +370,23 @@ class CodingControllerTest {
     }
 
     private static class FakeFeedbackController extends FeedbackController {
-        TextArea receivedQuestionOutput;
-        TextArea receivedCodeEditor;
-        javafx.scene.control.TextInputControl receivedAnswerInput;
+        String receivedQuestion;
+        String receivedCode;
+        String receivedExplanation;
         String receivedReturnScene;
 
         boolean evaluationCalled = false;
 
         @Override
         public void setAnswerControls(
-                TextArea questionOutput,
-                TextArea codeEditor,
-                javafx.scene.control.TextInputControl answerInput,
+                String question,
+                String code,
+                String explanation,
                 String returnScene) {
 
-            this.receivedQuestionOutput = questionOutput;
-            this.receivedCodeEditor = codeEditor;
-            this.receivedAnswerInput = answerInput;
+            this.receivedQuestion = question;
+            this.receivedCode = code;
+            this.receivedExplanation = explanation;
             this.receivedReturnScene = returnScene;
         }
 

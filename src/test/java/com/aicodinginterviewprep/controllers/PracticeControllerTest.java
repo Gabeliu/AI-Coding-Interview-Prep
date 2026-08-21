@@ -6,7 +6,6 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -161,15 +160,15 @@ class PracticeControllerTest {
             controller.runEvaluation();
 
             assertEquals(
-                    controller.questionOutput,
-                    feedbackController.receivedQuestionOutput
+                    controller.questionOutput.getText(),
+                    feedbackController.receivedQuestion
             );
 
-            assertNull(feedbackController.receivedCodeEditor);
+            assertEquals("", feedbackController.receivedCode);
 
             assertEquals(
-                    controller.answerInput,
-                    feedbackController.receivedAnswerInput
+                    controller.answerInput.getText(),
+                    feedbackController.receivedExplanation
             );
 
             assertEquals("practice", feedbackController.receivedReturnScene);
@@ -496,23 +495,23 @@ class PracticeControllerTest {
     private static class FakeFeedbackController
         extends FeedbackController {
 
-        TextArea receivedQuestionOutput;
-        TextArea receivedCodeEditor;
-        javafx.scene.control.TextInputControl receivedAnswerInput;
+        String receivedQuestion;
+        String receivedCode;
+        String receivedExplanation;
         String receivedReturnScene;
 
         boolean evaluationCalled = false;
 
         @Override
         public void setAnswerControls(
-                TextArea questionOutput,
-                TextArea codeEditor,
-                javafx.scene.control.TextInputControl answerInput,
+                String question,
+                String code,
+                String explanation,
                 String returnScene) {
 
-            this.receivedQuestionOutput = questionOutput;
-            this.receivedCodeEditor = codeEditor;
-            this.receivedAnswerInput = answerInput;
+            this.receivedQuestion = question;
+            this.receivedCode = code;
+            this.receivedExplanation = explanation;
             this.receivedReturnScene = returnScene;
         }
 

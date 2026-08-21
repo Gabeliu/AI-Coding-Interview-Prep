@@ -81,7 +81,7 @@ public class PracticeController implements SceneAware {
         if (!(controller instanceof FeedbackController feedbackController)) {
             return;
         }
-        feedbackController.setAnswerControls(questionOutput, null, answerInput, "practice");
+        feedbackController.setAnswerControls(questionOutput.getText(), "", answerInput.getText(), "practice");
         feedbackController.runEvaluation();
     }
 }

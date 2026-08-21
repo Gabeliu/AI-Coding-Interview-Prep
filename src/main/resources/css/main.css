@@ -99,6 +99,77 @@
     -fx-background-color: #fffdf9;
 }
 
+/* ---------- Code editor (VS Code dark theme look) ---------- */
+
+.code-editor-shell {
+    -fx-background-color: #1e1e1e;
+    -fx-background-radius: 8px;
+    -fx-border-color: #3c3c3c;
+    -fx-border-width: 1px;
+    -fx-border-radius: 8px;
+}
+
+.code-editor {
+    -fx-background-color: transparent;
+    -fx-font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
+    -fx-font-size: 16px;
+}
+
+.code-editor .styled-text-area {
+    -fx-background-color: transparent;
+}
+
+.code-editor .text {
+    -fx-fill: #d4d4d4;
+}
+
+.code-editor .caret {
+    -fx-stroke: #ffffff;
+}
+
+.code-editor .selection {
+    -fx-fill: #264f78;
+}
+
+.code-editor .lineno {
+    -fx-background-color: #1e1e1e;
+    -fx-text-fill: #6e7681;
+    -fx-padding: 0 10px 0 10px;
+}
+
+.code-editor .code-keyword {
+    -fx-fill: #569cd6;
+    -fx-font-weight: bold;
+}
+
+.code-editor .code-string {
+    -fx-fill: #ce9178;
+}
+
+.code-editor .code-comment {
+    -fx-fill: #6a9955;
+    -fx-font-style: italic;
+}
+
+.code-editor .code-number {
+    -fx-fill: #b5cea8;
+}
+
+.code-editor .code-annotation {
+    -fx-fill: #dcdcaa;
+}
+
+.code-editor .code-bracket {
+    -fx-fill: #ffd700;
+}
+
+.code-editor-placeholder {
+    -fx-text-fill: #6e7681;
+    -fx-font-family: "Cascadia Code", "Consolas", "Courier New", monospace;
+    -fx-font-size: 16px;
+    -fx-font-style: italic;
+}
+
 .question-label {
     -fx-font-size: 18px;
 }

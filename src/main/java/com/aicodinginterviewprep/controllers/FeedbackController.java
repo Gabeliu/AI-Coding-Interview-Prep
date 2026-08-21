@@ -7,7 +7,6 @@ import com.aicodinginterviewprep.openai.EvaluationResult;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputControl;
 
 public class FeedbackController implements SceneAware {
     private SceneManager sceneManager;
@@ -16,10 +15,10 @@ public class FeedbackController implements SceneAware {
     public TextArea textareaEvaluation;
     public Button buttonTryAgain;
 
-    // References to the originating tab's controls for answer extraction
-    private TextArea questionOutput;
-    private TextArea codeEditor;
-    private TextInputControl answerInput;
+    // Snapshot of the originating tab's answer at the moment evaluation was requested
+    private String question = "";
+    private String code = "";
+    private String explanation = "";
     private String returnScene = "practice";
 
     @Override
@@ -27,15 +26,14 @@ public class FeedbackController implements SceneAware {
         this.sceneManager = sceneManager;
     }
 
-    public void setAnswerControls(TextArea questionOutput, TextArea codeEditor, TextInputControl answerInput) {
-        setAnswerControls(questionOutput, codeEditor, answerInput, "practice");
+    public void setAnswerControls(String question, String code, String explanation) {
+        setAnswerControls(question, code, explanation, "practice");
     }
 
-    public void setAnswerControls(
-        TextArea questionOutput, TextArea codeEditor, TextInputControl answerInput, String returnScene) {
-        this.questionOutput = questionOutput;
-        this.codeEditor = codeEditor;
-        this.answerInput = answerInput;
+    public void setAnswerControls(String question, String code, String explanation, String returnScene) {
+        this.question = question == null ? "" : question;
+        this.code = code == null ? "" : code;
+        this.explanation = explanation == null ? "" : explanation;
         this.returnScene = returnScene;
     }
 
@@ -44,8 +42,8 @@ public class FeedbackController implements SceneAware {
     }
 
     public void runEvaluation() {
-        String question = extractValidQuestion();
-        if (question == null) {
+        String validQuestion = extractValidQuestion();
+        if (validQuestion == null) {
             showFeedback("Please generate a question first before running an evaluation.");
             return;
         }
@@ -59,7 +57,7 @@ public class FeedbackController implements SceneAware {
         setEvaluationInProgress(true);
         showFeedback("Evaluating your response with AI, please wait...");
 
-        evaluatorService.evaluateAnswerAsync(question, userAnswer)
+        evaluatorService.evaluateAnswerAsync(validQuestion, userAnswer)
             .thenAccept(result -> Platform.runLater(() -> handleEvaluationSuccess(result)))
             .exceptionally(ex -> {
                 Platform.runLater(() -> handleEvaluationError(ex));
@@ -68,32 +66,28 @@ public class FeedbackController implements SceneAware {
     }
 
     private String extractValidQuestion() {
-        String question = getTextOrEmpty(questionOutput);
-        if (question.isEmpty() || "Question will appear here.".equals(question)) {
+        String trimmed = question.trim();
+        if (trimmed.isEmpty() || "Question will appear here.".equals(trimmed)) {
             return null;
         }
-        return question;
+        return trimmed;
     }
 
     private String buildUserAnswer() {
-        String explanation = getTextOrEmpty(answerInput);
-        String code = getTextOrEmpty(codeEditor);
+        String trimmedExplanation = explanation.trim();
+        String trimmedCode = code.trim();
 
         StringBuilder answerBuilder = new StringBuilder();
-        if (!explanation.isEmpty() && !"Enter your solution explanation...".equals(explanation)) {
-            answerBuilder.append(explanation);
+        if (!trimmedExplanation.isEmpty()) {
+            answerBuilder.append(trimmedExplanation);
         }
-        if (!code.isEmpty() && !"// Write your code here".equals(code)) {
+        if (!trimmedCode.isEmpty()) {
             if (!answerBuilder.isEmpty()) {
                 answerBuilder.append("\n\nCode:\n");
             }
-            answerBuilder.append(code);
+            answerBuilder.append(trimmedCode);
         }
         return answerBuilder.toString().trim();
-    }
-
-    private String getTextOrEmpty(TextInputControl control) {
-        return control != null && control.getText() != null ? control.getText().trim() : "";
     }
 
     private void showFeedback(String message) {

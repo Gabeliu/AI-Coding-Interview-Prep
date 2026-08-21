@@ -18,7 +18,6 @@ import com.aicodinginterviewprep.openai.EvaluationResult;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 class FeedbackControllerTest {
@@ -70,18 +69,15 @@ class FeedbackControllerTest {
     }
 
     @Test
-    void setAnswerControls_storesReferences() throws Exception {
+    void setAnswerControls_storesValues() throws Exception {
         runOnFxThreadAndWait(() -> {
             FeedbackController controller = createController();
-            TextArea questionOutput = new TextArea();
-            TextArea codeEditor = new TextArea();
-            TextField answerInput = new TextField();
 
-            controller.setAnswerControls(questionOutput, codeEditor, answerInput);
+            controller.setAnswerControls("What is Java?", "int x;", "Explanation");
 
-            assertEquals(questionOutput, getPrivateField(controller, "questionOutput"));
-            assertEquals(codeEditor, getPrivateField(controller, "codeEditor"));
-            assertEquals(answerInput, getPrivateField(controller, "answerInput"));
+            assertEquals("What is Java?", getPrivateField(controller, "question"));
+            assertEquals("int x;", getPrivateField(controller, "code"));
+            assertEquals("Explanation", getPrivateField(controller, "explanation"));
         });
     }
 
@@ -99,18 +95,15 @@ class FeedbackControllerTest {
     }
 
     @Test
-    void setAnswerControls_withReturnScene_storesReferencesAndReturnScene() throws Exception {
+    void setAnswerControls_withReturnScene_storesValuesAndReturnScene() throws Exception {
         runOnFxThreadAndWait(() -> {
             FeedbackController controller = createController();
-            TextArea questionOutput = new TextArea();
-            TextArea codeEditor = new TextArea();
-            TextField answerInput = new TextField();
 
-            controller.setAnswerControls(questionOutput, codeEditor, answerInput, "coding");
+            controller.setAnswerControls("What is Java?", "int x;", "Explanation", "coding");
 
-            assertEquals(questionOutput, getPrivateField(controller, "questionOutput"));
-            assertEquals(codeEditor, getPrivateField(controller, "codeEditor"));
-            assertEquals(answerInput, getPrivateField(controller, "answerInput"));
+            assertEquals("What is Java?", getPrivateField(controller, "question"));
+            assertEquals("int x;", getPrivateField(controller, "code"));
+            assertEquals("Explanation", getPrivateField(controller, "explanation"));
             assertEquals("coding", getPrivateField(controller, "returnScene"));
         });
     }
@@ -122,7 +115,7 @@ class FeedbackControllerTest {
             FakeSceneManager sceneManager = new FakeSceneManager();
 
             controller.setSceneManager(sceneManager);
-            controller.setAnswerControls(new TextArea(), new TextArea(), new TextField(), "coding");
+            controller.setAnswerControls("", "", "", "coding");
             controller.onTryAgain();
 
             assertEquals("coding", sceneManager.lastScene);
@@ -133,7 +126,7 @@ class FeedbackControllerTest {
     void runEvaluation_whenQuestionIsEmpty_showsErrorMessage() throws Exception {
         runOnFxThreadAndWait(() -> {
             FeedbackController controller = createController();
-            controller.setAnswerControls(new TextArea(), new TextArea(), new TextField());
+            controller.setAnswerControls("", "", "");
 
             controller.runEvaluation();
 
@@ -146,10 +139,8 @@ class FeedbackControllerTest {
     void runEvaluation_whenQuestionIsDefault_showsErrorMessage() throws Exception {
         runOnFxThreadAndWait(() -> {
             FeedbackController controller = createController();
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("Question will appear here.");
 
-            controller.setAnswerControls(questionOutput, new TextArea(), new TextField());
+            controller.setAnswerControls("Question will appear here.", "", "");
             controller.runEvaluation();
 
             assertTrue(controller.textareaEvaluation.getText()
@@ -161,44 +152,8 @@ class FeedbackControllerTest {
     void runEvaluation_whenAnswerIsEmpty_showsErrorMessage() throws Exception {
         runOnFxThreadAndWait(() -> {
             FeedbackController controller = createController();
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
 
-            controller.setAnswerControls(questionOutput, new TextArea(), new TextField());
-            controller.runEvaluation();
-
-            assertTrue(controller.textareaEvaluation.getText()
-                    .contains("Please provide an answer explanation or code solution"));
-        });
-    }
-
-    @Test
-    void runEvaluation_whenAnswerIsDefaultExplanation_showsErrorMessage() throws Exception {
-        runOnFxThreadAndWait(() -> {
-            FeedbackController controller = createController();
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Enter your solution explanation...");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
-            controller.runEvaluation();
-
-            assertTrue(controller.textareaEvaluation.getText()
-                    .contains("Please provide an answer explanation or code solution"));
-        });
-    }
-
-    @Test
-    void runEvaluation_whenAnswerIsDefaultCode_showsErrorMessage() throws Exception {
-        runOnFxThreadAndWait(() -> {
-            FeedbackController controller = createController();
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextArea codeEditor = new TextArea();
-            codeEditor.setText("// Write your code here");
-
-            controller.setAnswerControls(questionOutput, codeEditor, new TextField());
+            controller.setAnswerControls("What is Java?", "", "");
             controller.runEvaluation();
 
             assertTrue(controller.textareaEvaluation.getText()
@@ -216,12 +171,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a programming language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a programming language");
             setEvaluatorService(controller, service);
 
             controller.runEvaluation();
@@ -243,12 +193,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a programming language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a programming language");
             setEvaluatorService(controller, service);
 
             controller.runEvaluation();
@@ -272,12 +217,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a programming language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a programming language");
             setEvaluatorService(controller, service);
 
             controller.textareaEvaluation.textProperty()
@@ -311,12 +251,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a programming language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a programming language");
             setEvaluatorService(controller, service);
 
             controller.textareaEvaluation.textProperty()
@@ -349,12 +284,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a programming language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a programming language");
             setEvaluatorService(controller, service);
 
             controller.textareaEvaluation.textProperty()
@@ -388,12 +318,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a programming language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a programming language");
             setEvaluatorService(controller, service);
 
             controller.textareaEvaluation.textProperty()
@@ -424,14 +349,11 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("Write a function");
-            TextArea codeEditor = new TextArea();
-            codeEditor.setText("public int add(int a, int b) { return a + b; }");
-            TextField answerInput = new TextField();
-            answerInput.setText("This function adds two numbers");
-
-            controller.setAnswerControls(questionOutput, codeEditor, answerInput);
+            controller.setAnswerControls(
+                "Write a function",
+                "public int add(int a, int b) { return a + b; }",
+                "This function adds two numbers"
+            );
             setEvaluatorService(controller, service);
 
             service.completed.addListener((observable, oldValue, newValue) -> {
@@ -461,14 +383,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("Explain OOP");
-            TextArea codeEditor = new TextArea();
-            codeEditor.setText("// Write your code here");
-            TextField answerInput = new TextField();
-            answerInput.setText("OOP is about objects and classes");
-
-            controller.setAnswerControls(questionOutput, codeEditor, answerInput);
+            controller.setAnswerControls("Explain OOP", "", "OOP is about objects and classes");
             setEvaluatorService(controller, service);
 
             service.completed.addListener((observable, oldValue, newValue) -> {
@@ -496,14 +411,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             holder[0] = controller;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("Write a loop");
-            TextArea codeEditor = new TextArea();
-            codeEditor.setText("for (int i = 0; i < 10; i++) {}");
-            TextField answerInput = new TextField();
-            answerInput.setText("Enter your solution explanation...");
-
-            controller.setAnswerControls(questionOutput, codeEditor, answerInput);
+            controller.setAnswerControls("Write a loop", "for (int i = 0; i < 10; i++) {}", "");
             setEvaluatorService(controller, service);
 
             service.completed.addListener((observable, oldValue, newValue) -> {
@@ -532,12 +440,7 @@ class FeedbackControllerTest {
             FeedbackController controller = createController();
             controller.textareaEvaluation = null;
 
-            TextArea questionOutput = new TextArea();
-            questionOutput.setText("What is Java?");
-            TextField answerInput = new TextField();
-            answerInput.setText("Java is a language");
-
-            controller.setAnswerControls(questionOutput, new TextArea(), answerInput);
+            controller.setAnswerControls("What is Java?", "", "Java is a language");
             setEvaluatorService(controller, service);
 
             service.completionLatch.addListener((observable, oldValue, newValue) -> {
