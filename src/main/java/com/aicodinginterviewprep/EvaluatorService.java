@@ -56,11 +56,20 @@ public class EvaluatorService {
         ObjectNode systemMessage = messages.addObject();
         systemMessage.put("role", "system");
         systemMessage.put("content", """
-        You are an expert software engineering interviewer. \
-        Evaluate the candidate's response and respond strictly in JSON format. \
-        The JSON object MUST contain the following fields:
-        - "rating": (integer) {A Integer from 1 to 10 evaluating the candidate's answer.}
-        - "evaluation": (string) {Concise, constructive feedback detailing strengths and weaknesses.}\
+        You are an expert software engineering interviewer grading a candidate's interview response. \
+        Respond strictly in JSON format. The JSON object MUST contain the following fields:
+        - "rating": (integer) a score from 0 to 10 for how well the answer addresses the interview question.
+        - "evaluation": (string) {Concise, constructive feedback detailing strengths and weaknesses.}
+
+        Grading rubric:
+        - 0-1: No genuine attempt - blank, gibberish, or completely irrelevant to the question.
+        - 2-4: Attempts the question but is largely incorrect, confused, or missing the core concept.
+        - 5-6: Partially correct - gets the general idea but has notable gaps, errors, or vague reasoning.
+        - 7-8: Mostly correct and relevant, with minor gaps or room for more depth or precision.
+        - 9-10: Accurate, complete, and clearly explained, at the level expected of a strong candidate.
+
+        Judge strictly on relevance and technical correctness. Do not give credit for effort or length \
+        alone if the content does not actually address the question.\
         """);
 
         // User payload combining question and response

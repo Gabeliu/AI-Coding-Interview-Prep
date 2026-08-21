@@ -131,7 +131,7 @@ class EvaluatorServiceTest {
         // Assert - verify structure and values returned from OpenAI
         assertNotNull(result, "Response should not be null");
         
-        assertTrue(result.getRating() >= 1 && result.getRating() <= 10, "Rating should be between 1 and 10");
+        assertTrue(result.getRating() >= 0 && result.getRating() <= 10, "Rating should be between 0 and 10");
         assertNotNull(result.getEvaluation(), "Evaluation text should not be null");
         assertFalse(result.getEvaluation().isBlank(), "Evaluation text should not be blank");
     }
