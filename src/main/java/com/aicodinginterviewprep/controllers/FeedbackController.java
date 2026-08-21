@@ -14,6 +14,7 @@ public class FeedbackController implements SceneAware {
 
     public TextArea textareaEvaluation;
     public Button buttonTryAgain;
+    public Button buttonQuit;
 
     // Snapshot of the originating tab's answer at the moment evaluation was requested
     private String question = "";
@@ -39,6 +40,10 @@ public class FeedbackController implements SceneAware {
 
     public void onTryAgain() {
         sceneManager.switchToScene(returnScene);
+    }
+
+    public void onQuit() {
+        sceneManager.switchToScene("home");
     }
 
     public void runEvaluation() {
@@ -99,6 +104,9 @@ public class FeedbackController implements SceneAware {
     private void setEvaluationInProgress(boolean inProgress) {
         if (buttonTryAgain != null) {
             buttonTryAgain.setDisable(inProgress);
+        }
+        if (buttonQuit != null) {
+            buttonQuit.setDisable(inProgress);
         }
     }
 

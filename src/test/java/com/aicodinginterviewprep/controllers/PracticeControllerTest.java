@@ -106,6 +106,57 @@ class PracticeControllerTest {
     }
 
     @Test
+    void setSceneManager_submitButtonDisabledWhenAnswerIsEmpty() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+
+            controller.setSceneManager(sceneManager);
+
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
+    void typingAnAnswerEnablesSubmitButton() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.answerInput.setText("My explanation");
+
+            assertFalse(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
+    void whitespaceOnlyAnswerKeepsSubmitButtonDisabled() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.answerInput.setText("   ");
+
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
+    void clearingTheAnswerDisablesSubmitButtonAgain() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.answerInput.setText("My explanation");
+            assertFalse(controller.buttonSubmitAnswer.isDisabled());
+
+            controller.answerInput.clear();
+
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
     void onReturn_switchesToHomeScene() throws Exception {
         runOnFxThreadAndWait(() -> {
             PracticeController controller = createController();
@@ -299,10 +350,12 @@ class PracticeControllerTest {
             setQuestionService(controller, service);
 
             controller.answerInput.setText("My old answer from the previous question");
+            assertFalse(controller.buttonSubmitAnswer.isDisabled());
 
             controller.onGenerateQuestion();
 
             assertEquals("", controller.answerInput.getText());
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
         });
 
         service.release();

@@ -56,7 +56,9 @@ public class CodingController implements SceneAware {
         codeEditor.textProperty().addListener((observable, oldText, newText) -> {
             codePlaceholder.setVisible(newText.isEmpty());
             codeEditor.setStyleSpans(0, JavaSyntaxHighlighter.computeHighlighting(newText));
+            buttonSubmitAnswer.setDisable(newText.trim().isEmpty());
         });
+        buttonSubmitAnswer.setDisable(true);
 
         VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(codeEditor);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);

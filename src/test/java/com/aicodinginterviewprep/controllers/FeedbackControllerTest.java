@@ -95,6 +95,33 @@ class FeedbackControllerTest {
     }
 
     @Test
+    void onQuit_switchesToHomeScene() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            FeedbackController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+
+            controller.setSceneManager(sceneManager);
+            controller.onQuit();
+
+            assertEquals("home", sceneManager.lastScene);
+        });
+    }
+
+    @Test
+    void onQuit_afterCodingEvaluation_stillSwitchesToHomeScene() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            FeedbackController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+
+            controller.setSceneManager(sceneManager);
+            controller.setAnswerControls("", "", "", "coding");
+            controller.onQuit();
+
+            assertEquals("home", sceneManager.lastScene);
+        });
+    }
+
+    @Test
     void setAnswerControls_withReturnScene_storesValuesAndReturnScene() throws Exception {
         runOnFxThreadAndWait(() -> {
             FeedbackController controller = createController();
@@ -199,6 +226,7 @@ class FeedbackControllerTest {
             controller.runEvaluation();
 
             assertTrue(controller.buttonTryAgain.isDisabled());
+            assertTrue(controller.buttonQuit.isDisabled());
         });
 
         service.release();
@@ -268,6 +296,7 @@ class FeedbackControllerTest {
 
         runOnFxThreadAndWait(() -> {
             assertFalse(holder[0].buttonTryAgain.isDisabled());
+            assertFalse(holder[0].buttonQuit.isDisabled());
         });
     }
 
@@ -335,6 +364,7 @@ class FeedbackControllerTest {
 
         runOnFxThreadAndWait(() -> {
             assertFalse(holder[0].buttonTryAgain.isDisabled());
+            assertFalse(holder[0].buttonQuit.isDisabled());
         });
     }
 
@@ -459,6 +489,7 @@ class FeedbackControllerTest {
         FeedbackController controller = new FeedbackController();
         controller.textareaEvaluation = new TextArea();
         controller.buttonTryAgain = new Button();
+        controller.buttonQuit = new Button();
         return controller;
     }
 

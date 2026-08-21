@@ -4,6 +4,7 @@ import com.aicodinginterviewprep.QuestionType;
 import com.aicodinginterviewprep.SceneAware;
 import com.aicodinginterviewprep.SceneManager;
 import com.aicodinginterviewprep.service.OpenAiQuestionService;
+import javafx.beans.binding.Bindings;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -30,6 +31,11 @@ public class PracticeController implements SceneAware {
         this.sceneManager = sceneManager;
         this.comboQuestionType.getItems().addAll(QuestionType.BEHAVIOURAL, QuestionType.THEORY);
         this.comboQuestionType.setValue(QuestionType.BEHAVIOURAL);
+
+        buttonSubmitAnswer.disableProperty().bind(Bindings.createBooleanBinding(
+            () -> answerInput.getText() == null || answerInput.getText().trim().isEmpty(),
+            answerInput.textProperty()
+        ));
     }
 
     @FXML

@@ -94,6 +94,55 @@ class CodingControllerTest {
     }
 
     @Test
+    void setSceneManager_submitButtonDisabledWhenCodeIsEmpty() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
+    void typingCodeEnablesSubmitButton() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.codeEditor.replaceText("int x;");
+
+            assertFalse(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
+    void whitespaceOnlyCodeKeepsSubmitButtonDisabled() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.codeEditor.replaceText("   \n  ");
+
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
+    void clearingCodeDisablesSubmitButtonAgain() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.codeEditor.replaceText("int x;");
+            assertFalse(controller.buttonSubmitAnswer.isDisabled());
+
+            controller.codeEditor.clear();
+
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
+        });
+    }
+
+    @Test
     void typingInCodeEditorHidesPlaceholderAndAppliesHighlighting() throws Exception {
         runOnFxThreadAndWait(() -> {
             CodingController controller = createController();
@@ -234,11 +283,13 @@ class CodingControllerTest {
 
             controller.codeEditor.replaceText("public int[] mySolution() { return null; }");
             assertFalse(controller.codePlaceholder.isVisible());
+            assertFalse(controller.buttonSubmitAnswer.isDisabled());
 
             controller.onGenerateQuestion();
 
             assertEquals("", controller.codeEditor.getText());
             assertTrue(controller.codePlaceholder.isVisible());
+            assertTrue(controller.buttonSubmitAnswer.isDisabled());
         });
 
         service.release();
