@@ -17,42 +17,6 @@
     -fx-font-size: 17px;
 }
 
-/* ---------- Panes ----------- */
-
-.primary-pane {
-    -fx-background-color: #489caa;
-    -fx-border-color: #d1eaf1 #059498 #058691 #8ad3d3; /* Top, Right, Bottom, Left */
-    -fx-border-width: 4px;
-    -fx-border-insets: 0;
-}
-
-
-/* ----------- Vbox ----------- */
-
-.vbox {
-    -fx-alignment: center;
-    -fx-border-width: 4px;
-    -fx-border-color: #172d3e;
-    -fx-border-radius: 5px;
-    -fx-background-color: #a6dde3;
-    -fx-background-radius: 5px;
-    -fx-background-insets: 2px;
-    -fx-spacing: 6;
-    -fx-padding: 5;
-
-}
-
-.inner-box {
-    -fx-spacing: 6;
-}
-
-/* ----------- Hbox ----------- */
-
-.hbox {
-    -fx-alignment: center;
-    -fx-spacing: 40;
-}
-
 /* ---------- Labels ---------- */
 
 .label {
@@ -92,6 +56,8 @@
 
     -fx-focus-color: transparent;
     -fx-faint-focus-color: transparent;
+
+    -fx-effect: dropshadow(gaussian, rgba(41, 37, 34, 0.10), 10, 0, 0, 2);
 }
 
 
@@ -107,6 +73,7 @@
     -fx-border-color: #3c3c3c;
     -fx-border-width: 1px;
     -fx-border-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.25), 12, 0, 0, 3);
 }
 
 .code-editor {
@@ -201,6 +168,7 @@
     -fx-border-width: 1px;
     -fx-border-radius: 18px;
     -fx-padding: 40px 48px;
+    -fx-effect: dropshadow(gaussian, rgba(41, 37, 34, 0.14), 24, 0, 0, 6);
 }
 
 .auth-title {
@@ -243,21 +211,32 @@
 .button {
     -fx-text-fill: #443b35;
     -fx-background-color: #a6dde3;
-    -fx-background-radius: 10px;
-    -fx-border-width: 4px;
+    -fx-background-radius: 12px;
+    -fx-border-width: 1.5px;
     -fx-border-color: #172d3e;
-    -fx-border-radius: 7px;
-    -fx-background-insets: 2px;
+    -fx-border-radius: 12px;
 
     -fx-padding: 10px 20px;
     -fx-font-size: 16px;
     -fx-font-weight: bold;
 
     -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(23, 45, 62, 0.20), 8, 0, 0, 2);
 }
 
 .button:hover {
-    -fx-background-color: #e4dbd1;
+    -fx-background-color: #92d2d9;
+}
+
+.button:armed {
+    -fx-background-color: #7fc3cb;
+    -fx-effect: dropshadow(gaussian, rgba(23, 45, 62, 0.20), 3, 0, 0, 1);
+    -fx-translate-y: 1px;
+}
+
+.button:disabled {
+    -fx-opacity: 0.55;
+    -fx-effect: none;
 }
 
 /* ---------- Progress Bars ---------- */
