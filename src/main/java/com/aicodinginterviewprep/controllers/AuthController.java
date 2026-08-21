@@ -84,7 +84,7 @@ public class AuthController implements SceneAware {
             labelMessage.setText("Incorrect username or password.");
             return;
         }
-        labelMessage.setText("");
+        resetForm();
         sceneManager.switchToScene("practice");
     }
 
@@ -109,17 +109,21 @@ public class AuthController implements SceneAware {
         }
 
         authenticator.login(username, password);
-        labelMessage.setText("");
+        resetForm();
         sceneManager.switchToScene("practice");
     }
 
     public void onReturn() {
+        resetForm();
+        sceneManager.switchToScene("home");
+    }
+
+    private void resetForm() {
         textfieldUsername.clear();
         passwordfieldPassword.clear();
         labelMessage.setText("");
         if (passwordVisible) {
             onTogglePasswordVisibility();
         }
-        sceneManager.switchToScene("home");
     }
 }

@@ -13,6 +13,9 @@ import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
 
 public class PracticeController implements SceneAware {
+    private static final String GENERATE_FIRST_PROMPT = "Generate a question first to start answering.";
+    private static final String ANSWER_PROMPT = "Explain your solution";
+
     private final OpenAiQuestionService questionService = new OpenAiQuestionService();
     private SceneManager sceneManager;
 
@@ -36,6 +39,9 @@ public class PracticeController implements SceneAware {
             () -> answerInput.getText() == null || answerInput.getText().trim().isEmpty(),
             answerInput.textProperty()
         ));
+
+        answerInput.setDisable(true);
+        answerInput.setPromptText(GENERATE_FIRST_PROMPT);
     }
 
     @FXML
@@ -44,6 +50,8 @@ public class PracticeController implements SceneAware {
         buttonGenerateQuestion.setDisable(true);
         questionOutput.setText("Generating question...");
         answerInput.clear();
+        answerInput.setDisable(true);
+        answerInput.setPromptText(GENERATE_FIRST_PROMPT);
 
         Task<String> task = new Task<>() {
             @Override
@@ -55,6 +63,8 @@ public class PracticeController implements SceneAware {
         task.setOnSucceeded(event -> {
             questionOutput.setText(task.getValue());
             buttonGenerateQuestion.setDisable(false);
+            answerInput.setDisable(false);
+            answerInput.setPromptText(ANSWER_PROMPT);
         });
 
         task.setOnFailed(event -> {

@@ -21,6 +21,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 
 public class CodingController implements SceneAware {
     private static final String PLACEHOLDER_TEXT = "// Write your code here";
+    private static final String GENERATE_FIRST_TEXT = "Generate a question first to start coding.";
 
     private final OpenAiQuestionService questionService = new OpenAiQuestionService();
     private SceneManager sceneManager;
@@ -47,18 +48,20 @@ public class CodingController implements SceneAware {
         codeEditor.setParagraphGraphicFactory(LineNumberFactory.get(codeEditor));
         codeEditor.getStyleClass().add("code-editor");
 
-        codePlaceholder = new Label(PLACEHOLDER_TEXT);
+        codePlaceholder = new Label(GENERATE_FIRST_TEXT);
         codePlaceholder.getStyleClass().add("code-editor-placeholder");
         codePlaceholder.setMouseTransparent(true);
         StackPane.setAlignment(codePlaceholder, Pos.TOP_LEFT);
         StackPane.setMargin(codePlaceholder, new Insets(1, 0, 0, 54));
 
         codeEditor.textProperty().addListener((observable, oldText, newText) -> {
-            codePlaceholder.setVisible(newText.isEmpty());
+            updateCodePlaceholderVisibility();
             codeEditor.setStyleSpans(0, JavaSyntaxHighlighter.computeHighlighting(newText));
             buttonSubmitAnswer.setDisable(newText.trim().isEmpty());
         });
+        codeEditor.focusedProperty().addListener((observable, oldFocused, newFocused) -> updateCodePlaceholderVisibility());
         buttonSubmitAnswer.setDisable(true);
+        codeEditor.setDisable(true);
 
         VirtualizedScrollPane<CodeArea> scrollPane = new VirtualizedScrollPane<>(codeEditor);
         VBox.setVgrow(scrollPane, Priority.ALWAYS);
@@ -66,11 +69,17 @@ public class CodingController implements SceneAware {
         codeEditorContainer.getChildren().setAll(scrollPane, codePlaceholder);
     }
 
+    private void updateCodePlaceholderVisibility() {
+        codePlaceholder.setVisible(!codeEditor.isFocused() && codeEditor.getText().isEmpty());
+    }
+
     @FXML
     public void onGenerateQuestion() {
         buttonGenerateQuestion.setDisable(true);
         questionOutput.setText("Generating question...");
         codeEditor.clear();
+        codeEditor.setDisable(true);
+        codePlaceholder.setText(GENERATE_FIRST_TEXT);
 
         Task<String> task = new Task<>() {
             @Override
@@ -82,6 +91,8 @@ public class CodingController implements SceneAware {
         task.setOnSucceeded(event -> {
             questionOutput.setText(task.getValue());
             buttonGenerateQuestion.setDisable(false);
+            codeEditor.setDisable(false);
+            codePlaceholder.setText(PLACEHOLDER_TEXT);
         });
 
         task.setOnFailed(event -> {

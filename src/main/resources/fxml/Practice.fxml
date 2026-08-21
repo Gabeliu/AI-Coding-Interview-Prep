@@ -38,7 +38,7 @@
             <Insets bottom="8" left="8" right="8" top="8" />
          </padding>
          <Label styleClass="section-label" text="Your explanation" />
-         <TextArea fx:id="answerInput" prefHeight="633.0" prefRowCount="20" promptText="Explain your solution" wrapText="true" VBox.vgrow="ALWAYS" />
+         <TextArea fx:id="answerInput" disable="true" prefHeight="633.0" prefRowCount="20" promptText="Generate a question first to start answering." wrapText="true" VBox.vgrow="ALWAYS" />
       </VBox>
    </center>
 

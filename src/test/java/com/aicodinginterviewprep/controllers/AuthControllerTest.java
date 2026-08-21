@@ -138,6 +138,8 @@ class AuthControllerTest {
                 controller.onSignUp();
 
                 sceneManager.lastScene = null;
+                controller.textfieldUsername.setText("bob");
+                controller.passwordfieldPassword.setText("hunter2");
                 controller.onSignUp();
 
                 assertNull(sceneManager.lastScene, "Duplicate sign up should not navigate away");
@@ -162,6 +164,8 @@ class AuthControllerTest {
                 controller.onSignUp();
 
                 sceneManager.lastScene = null;
+                controller.textfieldUsername.setText("carol");
+                controller.passwordfieldPassword.setText("letmein");
                 controller.onLogIn();
 
                 assertEquals("practice", sceneManager.lastScene);
@@ -186,6 +190,7 @@ class AuthControllerTest {
                 controller.onSignUp();
 
                 sceneManager.lastScene = null;
+                controller.textfieldUsername.setText("dave");
                 controller.passwordfieldPassword.setText("wrongpassword");
                 controller.onLogIn();
 
@@ -211,6 +216,8 @@ class AuthControllerTest {
                 controller.onSignUp();
 
                 sceneManager.lastScene = null;
+                controller.textfieldUsername.setText("erin");
+                controller.passwordfieldPassword.setText("passw0rd");
                 controller.onPassword();
 
                 assertEquals("practice", sceneManager.lastScene, "Pressing Enter in the password field should submit login");
@@ -327,6 +334,52 @@ class AuthControllerTest {
             assertTrue(controller.passwordfieldPassword.isVisible());
             assertFalse(controller.textfieldPasswordVisible.isVisible());
             assertEquals("Show", controller.linkTogglePassword.getText());
+        });
+    }
+
+    @Test
+    void onSignUp_success_clearsUsernameAndPassword(@TempDir Path tempDir) throws Exception {
+        runOnFxThreadAndWait(() -> {
+            try {
+                AuthController controller = createController();
+                FakeSceneManager sceneManager = new FakeSceneManager();
+                controller.setSceneManager(sceneManager);
+                useTempAuthenticator(controller, tempDir.resolve("accounts.json"));
+
+                controller.textfieldUsername.setText("grace");
+                controller.passwordfieldPassword.setText("hopper123");
+                controller.onSignUp();
+
+                assertEquals("", controller.textfieldUsername.getText());
+                assertEquals("", controller.passwordfieldPassword.getText());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    void onLogIn_success_clearsUsernameAndPassword(@TempDir Path tempDir) throws Exception {
+        runOnFxThreadAndWait(() -> {
+            try {
+                AuthController controller = createController();
+                FakeSceneManager sceneManager = new FakeSceneManager();
+                controller.setSceneManager(sceneManager);
+                useTempAuthenticator(controller, tempDir.resolve("accounts.json"));
+
+                controller.textfieldUsername.setText("heidi");
+                controller.passwordfieldPassword.setText("letmein456");
+                controller.onSignUp();
+
+                controller.textfieldUsername.setText("heidi");
+                controller.passwordfieldPassword.setText("letmein456");
+                controller.onLogIn();
+
+                assertEquals("", controller.textfieldUsername.getText());
+                assertEquals("", controller.passwordfieldPassword.getText());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         });
     }
 
