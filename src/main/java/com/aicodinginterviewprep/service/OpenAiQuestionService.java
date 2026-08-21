@@ -29,6 +29,8 @@ public class OpenAiQuestionService {
     private static final int MAX_COMPLETION_TOKENS_CODING = 450;
     private static final String CONTENT_FIELD = "content";
     private static final List<String> CODING_DIFFICULTIES = List.of("Easy", "Medium", "Hard");
+    private static final int MAX_ATTEMPTS = 3;
+    private static final long RETRY_DELAY_MS = 400;
 
     private final HttpClient httpClient;
     private final String apiKey;
@@ -62,6 +64,36 @@ public class OpenAiQuestionService {
                 "OPENAI_API_KEY is not set. Add it to your local .env file (see .env.example).");
         }
 
+        IOException lastIoFailure = null;
+        RuntimeException lastRuntimeFailure = null;
+
+        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+            try {
+                String question = requestQuestion(type);
+                if (!question.isBlank()) {
+                    return question;
+                }
+                lastRuntimeFailure = new IllegalStateException("OpenAI returned an empty response.");
+            } catch (IOException e) {
+                lastIoFailure = e;
+                lastRuntimeFailure = null;
+            } catch (RuntimeException e) {
+                lastRuntimeFailure = e;
+                lastIoFailure = null;
+            }
+
+            if (attempt < MAX_ATTEMPTS) {
+                Thread.sleep(RETRY_DELAY_MS);
+            }
+        }
+
+        if (lastIoFailure != null) {
+            throw lastIoFailure;
+        }
+        throw lastRuntimeFailure;
+    }
+
+    private String requestQuestion(QuestionType type) throws IOException, InterruptedException {
         JSONObject payload = new JSONObject();
         payload.put("model", model);
         payload.put("max_completion_tokens", maxCompletionTokensFor(type));

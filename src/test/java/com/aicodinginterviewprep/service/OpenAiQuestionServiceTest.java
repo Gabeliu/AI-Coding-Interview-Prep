@@ -9,12 +9,16 @@ import java.net.http.HttpResponse;
 import java.util.HashSet;
 import java.util.Set;
 
+import java.io.IOException;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class OpenAiQuestionServiceTest {
@@ -48,6 +52,65 @@ class OpenAiQuestionServiceTest {
         IllegalStateException exception = assertThrows(IllegalStateException.class,
             () -> service.generateQuestion(QuestionType.BEHAVIOURAL));
         assertTrue(exception.getMessage().contains("403"));
+        verify(httpClient, times(3)).send(any(HttpRequest.class), any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void generateQuestionRetriesOnEmptyContentThenSucceeds() throws Exception {
+        HttpClient httpClient = mock(HttpClient.class);
+        HttpResponse<String> emptyResponse = mock(HttpResponse.class);
+        when(emptyResponse.statusCode()).thenReturn(200);
+        when(emptyResponse.body()).thenReturn("{\"choices\":[{\"message\":{\"content\":\"\"}}]}");
+
+        HttpResponse<String> goodResponse = mock(HttpResponse.class);
+        when(goodResponse.statusCode()).thenReturn(200);
+        when(goodResponse.body()).thenReturn(
+            "{\"choices\":[{\"message\":{\"content\":\"What is a hash map?\"}}]}");
+
+        when(httpClient.<String>send(any(HttpRequest.class), any()))
+            .thenReturn(emptyResponse, goodResponse);
+
+        OpenAiQuestionService service = new OpenAiQuestionService(httpClient, "fake-key", "gpt-5-nano");
+
+        assertEquals("What is a hash map?", service.generateQuestion(QuestionType.THEORY));
+        verify(httpClient, times(2)).send(any(HttpRequest.class), any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void generateQuestionThrowsAfterExhaustingRetriesOnRepeatedEmptyContent() throws Exception {
+        HttpClient httpClient = mock(HttpClient.class);
+        HttpResponse<String> emptyResponse = mock(HttpResponse.class);
+        when(emptyResponse.statusCode()).thenReturn(200);
+        when(emptyResponse.body()).thenReturn("{\"choices\":[{\"message\":{\"content\":\"   \"}}]}");
+        when(httpClient.<String>send(any(HttpRequest.class), any())).thenReturn(emptyResponse);
+
+        OpenAiQuestionService service = new OpenAiQuestionService(httpClient, "fake-key", "gpt-5-nano");
+
+        IllegalStateException exception = assertThrows(IllegalStateException.class,
+            () -> service.generateQuestion(QuestionType.CODING));
+        assertTrue(exception.getMessage().toLowerCase().contains("empty"));
+        verify(httpClient, times(3)).send(any(HttpRequest.class), any());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void generateQuestionRetriesAfterTransientIOExceptionThenSucceeds() throws Exception {
+        HttpClient httpClient = mock(HttpClient.class);
+        HttpResponse<String> goodResponse = mock(HttpResponse.class);
+        when(goodResponse.statusCode()).thenReturn(200);
+        when(goodResponse.body()).thenReturn(
+            "{\"choices\":[{\"message\":{\"content\":\"What is a hash map?\"}}]}");
+
+        when(httpClient.<String>send(any(HttpRequest.class), any()))
+            .thenThrow(new IOException("connection reset"))
+            .thenReturn(goodResponse);
+
+        OpenAiQuestionService service = new OpenAiQuestionService(httpClient, "fake-key", "gpt-5-nano");
+
+        assertEquals("What is a hash map?", service.generateQuestion(QuestionType.THEORY));
+        verify(httpClient, times(2)).send(any(HttpRequest.class), any());
     }
 
     @Test
