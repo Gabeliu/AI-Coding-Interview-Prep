@@ -20,6 +20,21 @@ Thank you for contributing to AI Coding Interview Prep.
 
 - Use issue templates for bug reports and feature requests.
 - Link pull requests to the related issue when possible.
+- Before starting work, check that no one else is already assigned - assign
+  yourself (or ask a maintainer to assign you) so effort isn't duplicated.
+
+## Issue approval
+
+New issues (bug reports or feature requests) need team approval before anyone
+starts work on them:
+
+- Bring new issues up at the next weekly meeting (Monday in-person or
+  Thursday online), or
+- If it can't wait for a meeting, approval can come from a comment or
+  reaction from at least one other team member.
+
+Either way, record the approval as a comment on the issue itself (e.g. "approved,
+go ahead") before work begins, so there's a record of when and how it was approved.
 
 ## Code quality
 
