@@ -21,6 +21,13 @@ public class SpeechToTextService {
     private static final float SAMPLE_RATE = 16000f;
     private static final Path DEFAULT_MODEL_PATH = Path.of("models", "vosk-model-small-en-us-0.15");
 
+    // Vosk has no built-in silence rejection - a quiet room's background noise
+    // still produces some low-confidence guess instead of an empty result. This
+    // is a basic RMS-energy gate: audio quieter than this (16-bit PCM, so the
+    // scale is 0-32767) is treated as "nothing said" before it ever reaches the
+    // recognizer, rather than letting it guess at noise.
+    private static final double SILENCE_RMS_THRESHOLD = 400.0;
+
     private final Path modelPath;
     private Model model;
 
@@ -41,6 +48,9 @@ public class SpeechToTextService {
         if (pcmAudio == null || pcmAudio.length == 0) {
             throw new IllegalStateException("No audio was recorded.");
         }
+        if (isSilent(pcmAudio)) {
+            return "";
+        }
 
         ensureModelLoaded();
 
@@ -48,6 +58,22 @@ public class SpeechToTextService {
             recognizer.acceptWaveForm(pcmAudio, pcmAudio.length);
             return new JSONObject(recognizer.getFinalResult()).getString("text").trim();
         }
+    }
+
+    static boolean isSilent(byte[] pcmAudio) {
+        int sampleCount = pcmAudio.length / 2;
+        if (sampleCount == 0) {
+            return true;
+        }
+
+        long sumSquares = 0;
+        for (int i = 0; i + 1 < pcmAudio.length; i += 2) {
+            short sample = (short) ((pcmAudio[i + 1] << 8) | (pcmAudio[i] & 0xFF));
+            sumSquares += (long) sample * sample;
+        }
+
+        double rms = Math.sqrt((double) sumSquares / sampleCount);
+        return rms < SILENCE_RMS_THRESHOLD;
     }
 
     private void ensureModelLoaded() throws IOException {

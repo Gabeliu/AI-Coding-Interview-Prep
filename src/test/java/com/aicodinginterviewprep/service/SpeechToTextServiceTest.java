@@ -7,6 +7,7 @@ import org.vosk.Recognizer;
 import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -52,6 +53,35 @@ class SpeechToTextServiceTest {
         IllegalStateException exception = assertThrows(IllegalStateException.class,
             () -> service.transcribe(SOME_AUDIO));
         assertTrue(exception.getMessage().contains("Offline speech model not found"));
+    }
+
+    @Test
+    void transcribeWithSilentAudioReturnsEmptyStringWithoutLoadingModel() throws Exception {
+        SpeechToTextService service = new SpeechToTextService(Path.of("does", "not", "exist"));
+        byte[] silentAudio = new byte[3200];
+
+        assertEquals("", service.transcribe(silentAudio));
+    }
+
+    @Test
+    void isSilentReturnsTrueForZeroAmplitudeAudio() {
+        assertTrue(SpeechToTextService.isSilent(new byte[2000]));
+    }
+
+    @Test
+    void isSilentReturnsTrueForEmptyAudio() {
+        assertTrue(SpeechToTextService.isSilent(new byte[0]));
+    }
+
+    @Test
+    void isSilentReturnsFalseForLoudAudio() {
+        byte[] loud = new byte[2000];
+        for (int i = 0; i < loud.length; i += 2) {
+            loud[i] = (byte) 0xFF;
+            loud[i + 1] = (byte) 0x7F;
+        }
+
+        assertFalse(SpeechToTextService.isSilent(loud));
     }
 
     @Test
