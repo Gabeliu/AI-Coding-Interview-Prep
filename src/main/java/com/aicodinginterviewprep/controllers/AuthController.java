@@ -32,6 +32,8 @@ public class AuthController implements SceneAware {
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
+        this.buttonLogIn.getStyleClass().add("btn-primary");
+        this.buttonReturn.getStyleClass().add("btn-primary");
         this.authenticator = new Authenticator(ACCOUNTS_FILE);
         textfieldPasswordVisible.textProperty().bindBidirectional(passwordfieldPassword.textProperty());
         textfieldPasswordVisible.setVisible(false);

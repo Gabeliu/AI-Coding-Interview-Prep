@@ -25,6 +25,7 @@ public class FeedbackController implements SceneAware {
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
+        this.buttonTryAgain.getStyleClass().add("btn-primary");
     }
 
     public void setAnswerControls(TextArea questionOutput, TextArea codeEditor, TextInputControl answerInput) {

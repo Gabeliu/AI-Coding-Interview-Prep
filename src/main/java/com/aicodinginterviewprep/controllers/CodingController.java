@@ -28,6 +28,8 @@ public class CodingController implements SceneAware {
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
+        this.buttonReturn.getStyleClass().add("btn-primary");
+        this.buttonSubmitAnswer.getStyleClass().add("btn-primary");
     }
 
     @FXML

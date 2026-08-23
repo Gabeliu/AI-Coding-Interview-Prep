@@ -171,24 +171,43 @@
 /* ---------- Buttons ---------- */
 
 .button {
-    -fx-text-fill: #443b35;
-    -fx-background-color: #a6dde3;
-    -fx-background-radius: 10px;
-    -fx-border-width: 4px;
-    -fx-border-color: #172d3e;
-    -fx-border-radius: 7px;
-    -fx-background-insets: 2px;
+    -fx-background-color: -btn-line, -btn-fill;
+    -fx-background-insets: 0, 3;
+    -fx-background-radius: 12, 9;          /* inner = outer − inset */
 
+    -fx-text-fill: -btn-text;
     -fx-padding: 10px 20px;
-    -fx-font-size: 16px;
+    -fx-font-size: 15px;
     -fx-font-weight: bold;
-
     -fx-cursor: hand;
+
+    -btn-line: #643312;
+    -btn-fill: #ebddc5;
+    -btn-text: #2e2b25;
 }
 
-.button:hover {
-    -fx-background-color: #e4dbd1;
+.button:hover   { -btn-fill: derive(#ebddc5, -7%); }
+.button:pressed { -btn-fill: derive(#ebddc5, -14%);
+    -fx-background-insets: 1 0 0 0, 4 3 2 3; }
+.button:focused {
+    -fx-background-color: rgba(178, 98, 45, 0.35), -btn-line, -btn-fill;
+    -fx-background-insets: -3, 0, 3;
+    -fx-background-radius: 15, 12, 9;
 }
+.button:disabled { -fx-opacity: 0.45; -fx-cursor: default; }
+
+/* — variants — */
+.btn-primary  { -btn-fill: #b2622d; -btn-text: #fdf7f0; }
+.btn-primary:hover   { -btn-fill: #8c491a; }
+.btn-primary:pressed { -btn-fill: #643312; }
+
+.btn-quiet {
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -btn-text: #8c491a;
+    -fx-border-color: transparent;
+}
+.btn-quiet:hover { -fx-background-color: rgba(178, 98, 45, 0.12); }
 
 /* ---------- Progress Bars ---------- */
 
