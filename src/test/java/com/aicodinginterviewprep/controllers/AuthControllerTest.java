@@ -104,6 +104,26 @@ class AuthControllerTest {
     }
 
     @Test
+    void signUpWithNewAccount_setsCurrentUsernameOnSceneManager(@TempDir Path tempDir) throws Exception {
+        runOnFxThreadAndWait(() -> {
+            try {
+                AuthController controller = createController();
+                FakeSceneManager sceneManager = new FakeSceneManager();
+                controller.setSceneManager(sceneManager);
+                useTempAuthenticator(controller, tempDir.resolve("accounts.json"));
+
+                controller.textfieldUsername.setText("alice");
+                controller.passwordfieldPassword.setText("secret123");
+                controller.onSignUp();
+
+                assertEquals("alice", sceneManager.getCurrentUsername());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
     void signUpWithBlankUsernameShowsMessageAndDoesNotNavigate(@TempDir Path tempDir) throws Exception {
         runOnFxThreadAndWait(() -> {
             try {
@@ -170,6 +190,31 @@ class AuthControllerTest {
 
                 assertEquals("practice", sceneManager.lastScene);
                 assertEquals("", controller.labelMessage.getText());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    @Test
+    void logInWithCorrectCredentials_setsCurrentUsernameOnSceneManager(@TempDir Path tempDir) throws Exception {
+        runOnFxThreadAndWait(() -> {
+            try {
+                AuthController controller = createController();
+                FakeSceneManager sceneManager = new FakeSceneManager();
+                controller.setSceneManager(sceneManager);
+                useTempAuthenticator(controller, tempDir.resolve("accounts.json"));
+
+                controller.textfieldUsername.setText("carol");
+                controller.passwordfieldPassword.setText("letmein");
+                controller.onSignUp();
+
+                sceneManager.setCurrentUsername(null);
+                controller.textfieldUsername.setText("carol");
+                controller.passwordfieldPassword.setText("letmein");
+                controller.onLogIn();
+
+                assertEquals("carol", sceneManager.getCurrentUsername());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

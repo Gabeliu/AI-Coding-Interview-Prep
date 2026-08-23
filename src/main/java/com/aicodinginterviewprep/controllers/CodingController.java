@@ -36,11 +36,31 @@ public class CodingController implements SceneAware {
     @FXML public Button buttonSubmitAnswer;
     @FXML public Button buttonGenerateQuestion;
     @FXML public Button buttonPractice;
+    @FXML public Label labelLoggedInAs;
+    @FXML public Button buttonLogOut;
 
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
         setUpCodeEditor();
+    }
+
+    @Override
+    public void onSceneShown() {
+        updateLoggedInLabel();
+    }
+
+    private void updateLoggedInLabel() {
+        if (labelLoggedInAs == null) {
+            return;
+        }
+        String username = sceneManager.getCurrentUsername();
+        labelLoggedInAs.setText(username == null || username.isBlank() ? "" : "Logged in as " + username);
+    }
+
+    public void onLogOut() {
+        sceneManager.setCurrentUsername(null);
+        sceneManager.switchToScene("home");
     }
 
     private void setUpCodeEditor() {

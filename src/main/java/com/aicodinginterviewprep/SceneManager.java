@@ -15,6 +15,7 @@ public class SceneManager {
     private Scene currentScene;
     private Map<String, Scene> loadedScenes =  new HashMap<>();
     private Map<String, Object> controllers = new HashMap<>();
+    private String currentUsername;
 
     public SceneManager(Stage stage) {
         this.stage = stage;
@@ -35,6 +36,7 @@ public class SceneManager {
             Scene scene = loadedScenes.get(sceneName);
             currentScene = scene;
             stage.setScene(scene);
+            notifySceneShown(sceneName);
             return;
         }
 
@@ -58,8 +60,16 @@ public class SceneManager {
             loadedScenes.put(sceneName, scene);
             currentScene = scene;
             stage.setScene(scene);
+            notifySceneShown(sceneName);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load scene: " + sceneName, e);
+        }
+    }
+
+    private void notifySceneShown(String sceneName) {
+        Object controller = controllers.get(sceneName);
+        if (controller instanceof SceneAware sceneAware) {
+            sceneAware.onSceneShown();
         }
     }
 
@@ -73,5 +83,13 @@ public class SceneManager {
 
     public void registerScene(String name, String fxmlPath) {
         sceneMap.put(name, fxmlPath);
+    }
+
+    public void setCurrentUsername(String username) {
+        this.currentUsername = username;
+    }
+
+    public String getCurrentUsername() {
+        return currentUsername;
     }
 }

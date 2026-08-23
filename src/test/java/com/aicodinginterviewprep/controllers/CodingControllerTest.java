@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,7 @@ import com.aicodinginterviewprep.service.OpenAiQuestionService;
 
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
@@ -77,6 +79,8 @@ class CodingControllerTest {
         controller.buttonSubmitAnswer = new Button();
         controller.buttonGenerateQuestion = new Button();
         controller.buttonPractice = new Button();
+        controller.labelLoggedInAs = new Label();
+        controller.buttonLogOut = new Button();
 
         return controller;
     }
@@ -390,6 +394,47 @@ class CodingControllerTest {
         runOnFxThreadAndWait(() -> {
             assertEquals("Failed to generate question: Test API failure", holder[0].questionOutput.getText());
             assertFalse(holder[0].buttonGenerateQuestion.isDisabled());
+        });
+    }
+
+    @Test
+    void onSceneShown_withLoggedInUser_showsUsername() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+            controller.setSceneManager(sceneManager);
+            sceneManager.setCurrentUsername("gabriel");
+
+            controller.onSceneShown();
+
+            assertEquals("Logged in as gabriel", controller.labelLoggedInAs.getText());
+        });
+    }
+
+    @Test
+    void onSceneShown_withNoLoggedInUser_showsEmptyLabel() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.onSceneShown();
+
+            assertEquals("", controller.labelLoggedInAs.getText());
+        });
+    }
+
+    @Test
+    void onLogOut_clearsUsernameAndNavigatesHome() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            CodingController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+            controller.setSceneManager(sceneManager);
+            sceneManager.setCurrentUsername("gabriel");
+
+            controller.onLogOut();
+
+            assertNull(sceneManager.getCurrentUsername());
+            assertEquals("home", sceneManager.lastScene);
         });
     }
 

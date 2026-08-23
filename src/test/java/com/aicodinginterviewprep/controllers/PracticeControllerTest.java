@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -293,6 +294,8 @@ class PracticeControllerTest {
         controller.buttonCodingPractice = new Button();
         controller.buttonVoiceInput = new Button();
         controller.labelVoiceStatus = new Label();
+        controller.labelLoggedInAs = new Label();
+        controller.buttonLogOut = new Button();
 
         return controller;
     }
@@ -741,6 +744,99 @@ class PracticeControllerTest {
             assertTrue(holder[0].labelVoiceStatus.getText().contains("Network error"));
             assertEquals("Record Answer", holder[0].buttonVoiceInput.getText());
             assertFalse(holder[0].buttonVoiceInput.isDisabled());
+        });
+    }
+
+    @Test
+    void onVoiceInput_emptyTranscription_showsDidntCatchMessageAndDoesNotTouchAnswer() throws Exception {
+        FakeMicrophoneRecorder recorder = new FakeMicrophoneRecorder();
+        FakeSpeechToTextService speechService = new FakeSpeechToTextService("");
+
+        PracticeController[] holder = new PracticeController[1];
+        CountDownLatch completed = new CountDownLatch(1);
+
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            holder[0] = controller;
+            controller.setSceneManager(new FakeSceneManager());
+            controller.answerInput.setDisable(false);
+            setMicrophoneRecorder(controller, recorder);
+            setSpeechToTextService(controller, speechService);
+
+            controller.labelVoiceStatus.textProperty().addListener((observable, oldValue, newValue) -> {
+                if ("Didn't catch that - try again.".equals(newValue)) {
+                    completed.countDown();
+                }
+            });
+
+            controller.onVoiceInput();
+            controller.onVoiceInput();
+        });
+
+        assertTrue(completed.await(5, TimeUnit.SECONDS));
+
+        runOnFxThreadAndWait(() -> {
+            assertEquals("", holder[0].answerInput.getText());
+            assertEquals("Record Answer", holder[0].buttonVoiceInput.getText());
+            assertFalse(holder[0].buttonVoiceInput.isDisabled());
+        });
+    }
+
+    @Test
+    void onSceneShown_withLoggedInUser_showsUsername() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+            controller.setSceneManager(sceneManager);
+            sceneManager.setCurrentUsername("gabriel");
+
+            controller.onSceneShown();
+
+            assertEquals("Logged in as gabriel", controller.labelLoggedInAs.getText());
+        });
+    }
+
+    @Test
+    void onSceneShown_withNoLoggedInUser_showsEmptyLabel() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+
+            controller.onSceneShown();
+
+            assertEquals("", controller.labelLoggedInAs.getText());
+        });
+    }
+
+    @Test
+    void onLogOut_clearsUsernameAndNavigatesHome() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            FakeSceneManager sceneManager = new FakeSceneManager();
+            controller.setSceneManager(sceneManager);
+            sceneManager.setCurrentUsername("gabriel");
+
+            controller.onLogOut();
+
+            assertNull(sceneManager.getCurrentUsername());
+            assertEquals("home", sceneManager.lastScene);
+        });
+    }
+
+    @Test
+    void onLogOut_stopsActiveRecording() throws Exception {
+        runOnFxThreadAndWait(() -> {
+            PracticeController controller = createController();
+            controller.setSceneManager(new FakeSceneManager());
+            FakeMicrophoneRecorder recorder = new FakeMicrophoneRecorder();
+            setMicrophoneRecorder(controller, recorder);
+
+            controller.onVoiceInput();
+            assertTrue(recorder.isRecording());
+
+            controller.onLogOut();
+
+            assertFalse(recorder.isRecording());
         });
     }
 

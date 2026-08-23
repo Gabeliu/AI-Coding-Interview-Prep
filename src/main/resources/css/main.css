@@ -255,6 +255,11 @@
     -fx-font-style: italic;
 }
 
+.muted-label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6b6157;
+}
+
 /* ---------- Progress Bars ---------- */
 
 .progress-bar {

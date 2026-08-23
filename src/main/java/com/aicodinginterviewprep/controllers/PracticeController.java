@@ -40,6 +40,8 @@ public class PracticeController implements SceneAware {
     @FXML public Button buttonCodingPractice;
     @FXML public Button buttonVoiceInput;
     @FXML public Label labelVoiceStatus;
+    @FXML public Label labelLoggedInAs;
+    @FXML public Button buttonLogOut;
     @FXML public ComboBox<QuestionType> comboQuestionType;
 
     @Override
@@ -56,6 +58,25 @@ public class PracticeController implements SceneAware {
         answerInput.setDisable(true);
         answerInput.setPromptText(GENERATE_FIRST_PROMPT);
         buttonVoiceInput.setDisable(true);
+    }
+
+    @Override
+    public void onSceneShown() {
+        updateLoggedInLabel();
+    }
+
+    private void updateLoggedInLabel() {
+        if (labelLoggedInAs == null) {
+            return;
+        }
+        String username = sceneManager.getCurrentUsername();
+        labelLoggedInAs.setText(username == null || username.isBlank() ? "" : "Logged in as " + username);
+    }
+
+    public void onLogOut() {
+        cancelRecordingIfActive();
+        sceneManager.setCurrentUsername(null);
+        sceneManager.switchToScene("home");
     }
 
     @FXML
@@ -147,8 +168,13 @@ public class PracticeController implements SceneAware {
         };
 
         task.setOnSucceeded(event -> {
-            appendTranscript(task.getValue());
-            setVoiceStatus("");
+            String transcript = task.getValue();
+            if (transcript == null || transcript.isBlank()) {
+                setVoiceStatus("Didn't catch that - try again.");
+            } else {
+                appendTranscript(transcript);
+                setVoiceStatus("");
+            }
             resetVoiceButton();
         });
 
@@ -165,9 +191,6 @@ public class PracticeController implements SceneAware {
     }
 
     private void appendTranscript(String transcript) {
-        if (transcript == null || transcript.isBlank()) {
-            return;
-        }
         String existing = answerInput.getText();
         String combined = existing == null || existing.isBlank()
             ? transcript

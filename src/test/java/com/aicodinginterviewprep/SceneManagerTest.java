@@ -246,6 +246,56 @@ class SceneManagerTest {
     }
 
     @Test
+    void getCurrentUsername_initiallyNull() {
+        assertNull(sceneManager.getCurrentUsername());
+    }
+
+    @Test
+    void setCurrentUsername_thenGetCurrentUsername_returnsIt() {
+        sceneManager.setCurrentUsername("gabriel");
+
+        assertEquals("gabriel", sceneManager.getCurrentUsername());
+    }
+
+    @Test
+    void switchToScene_freshLoad_callsOnSceneShown() {
+        runOnFxThread(() -> {
+            Stage stage = new Stage();
+            SceneManager manager = new SceneManager(stage);
+
+            manager.registerScene("aware", "/fxml/TestSceneAware.fxml");
+            manager.switchToScene("aware");
+
+            TestSceneController controller = (TestSceneController) manager.getController("aware");
+
+            assertEquals(1, controller.getSceneShownCount());
+
+            stage.close();
+        });
+    }
+
+    @Test
+    void switchToScene_cachedScene_alsoCallsOnSceneShown() {
+        runOnFxThread(() -> {
+            Stage stage = new Stage();
+            SceneManager manager = new SceneManager(stage);
+
+            manager.registerScene("aware", "/fxml/TestSceneAware.fxml");
+            manager.registerScene("other", "/fxml/TestScene.fxml");
+
+            manager.switchToScene("aware");
+            manager.switchToScene("other");
+            manager.switchToScene("aware");
+
+            TestSceneController controller = (TestSceneController) manager.getController("aware");
+
+            assertEquals(2, controller.getSceneShownCount());
+
+            stage.close();
+        });
+    }
+
+    @Test
     void switchToScene_brokenFXML_throwsRuntimeException() {
         runOnFxThread(() -> {
 
