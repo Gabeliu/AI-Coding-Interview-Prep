@@ -214,3 +214,68 @@
 .progress-bar {
     -fx-accent: #489caa;
 }
+
+/* ---------- Combo box (matches the secondary button) ---------- */
+
+.combo-box {
+    -fx-background-color: -btn-line, -btn-fill;
+    -fx-background-insets: 0, 3;
+    -fx-background-radius: 12, 9;
+    -fx-padding: 0;                       /* padding lives on the cell */
+    -fx-cursor: hand;
+
+    -btn-line: #643312;
+    -btn-fill: #ebddc5;
+    -btn-text: #2e2b25;
+}
+
+.combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -btn-text;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 4px 10px 17px;      /* 17 = button's 20 − 3px inset */
+}
+
+.combo-box > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 14px 0 6px;
+}
+.combo-box > .arrow-button > .arrow {
+    -fx-background-color: -btn-text;
+    -fx-padding: 3px 5px;
+}
+
+.combo-box:hover              { -btn-fill: derive(#ebddc5, -7%); }
+.combo-box:showing            { -btn-fill: derive(#ebddc5, -12%); }
+.combo-box:disabled           { -fx-opacity: 0.45; -fx-cursor: default; }
+.combo-box:focused {
+    -fx-background-color: rgba(178, 98, 45, 0.35), -btn-line, -btn-fill;
+    -fx-background-insets: -3, 0, 3;
+    -fx-background-radius: 15, 12, 9;
+}
+
+/* ---------- The dropdown popup ---------- */
+
+.combo-box-popup > .list-view {
+    -fx-background-color: #643312, #f6ecdc;
+    -fx-background-insets: 0, 3;
+    -fx-background-radius: 12, 9;
+    -fx-padding: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(46, 43, 37, 0.28), 16, 0, 0, 6);
+}
+
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #2e2b25;
+    -fx-font-size: 15px;
+    -fx-padding: 9px 16px;
+    -fx-background-radius: 6;
+}
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:hover {
+    -fx-background-color: rgba(178, 98, 45, 0.16);
+}
+.combo-box-popup > .list-view > .virtual-flow > .clipped-container > .sheet > .list-cell:filled:selected {
+    -fx-background-color: #b2622d;
+    -fx-text-fill: #fdf7f0;
+}
