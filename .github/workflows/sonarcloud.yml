@@ -11,15 +11,14 @@ jobs:
   sonarcloud:
     name: SonarCloud
     runs-on: ubuntu-latest
+    # Fork PRs don't get repository secrets (SONAR_TOKEN etc.), so this job
+    # can't authenticate for them. Skip it entirely instead of failing loudly -
+    # a fork PR is still a valid way to contribute, it just won't get a
+    # SonarCloud check on that PR. Team members with push access should still
+    # push branches here directly to get the full CI signal (see CONTRIBUTING.md).
+    if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
 
     steps:
-      - name: Reject fork pull requests
-        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
-        run: |
-          echo "::error::This PR comes from a fork (${{ github.event.pull_request.head.repo.full_name }}). GitHub does not pass repository secrets to fork PRs, so SonarCloud cannot authenticate here."
-          echo "::error::All team members have push access to this repo — push your branch here directly instead of from a personal fork. See CONTRIBUTING.md."
-          exit 1
-
       - name: Checkout repository
         uses: actions/checkout@v4
 
