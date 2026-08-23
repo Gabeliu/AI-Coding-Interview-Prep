@@ -279,17 +279,17 @@ class AuthControllerTest {
             FakeSceneManager sceneManager = new FakeSceneManager();
             controller.setSceneManager(sceneManager);
 
-            Stage stage = new Stage();
-            stage.setScene(new javafx.scene.Scene(new javafx.scene.layout.VBox(
-                controller.textfieldUsername, controller.passwordfieldPassword)));
-            stage.show();
+            // Deliberately no Stage/show() here - real window focus needs a window
+            // manager, which headless CI runners (Xvfb) don't have, and requesting
+            // it hangs indefinitely there. Scene tracks its own focus owner without
+            // needing a shown window, so that's enough to verify the redirect.
+            javafx.scene.Scene scene = new javafx.scene.Scene(new javafx.scene.layout.VBox(
+                controller.textfieldUsername, controller.passwordfieldPassword));
 
             controller.onUsername();
 
-            assertTrue(controller.passwordfieldPassword.isFocused());
+            assertEquals(controller.passwordfieldPassword, scene.getFocusOwner());
             assertNull(sceneManager.lastScene, "Pressing Enter in the username field should not navigate away");
-
-            stage.close();
         });
     }
 
