@@ -11,7 +11,8 @@
     -color-divider: rgba(32, 30, 29, 0.16);   /* the color-mix line, precomputed */
 
     /* applied */
-    -fx-background-color: -color-bg;
+    -fx-background-color: linear-gradient(to bottom right,
+    #f5ead8 0%, #f5ead8 58%, #eee0c9 58%, #eee0c9 100%);
     -fx-text-fill: -color-text;
     -fx-font-family: "Figtree", "Segoe UI", sans-serif;
     -fx-font-size: 17px;
@@ -170,12 +171,9 @@
 /* ---------- Buttons ---------- */
 
 .button {
-    -fx-text-fill: #443b35;
-    -fx-background-color: #a6dde3;
+    -fx-text-fill: #fdf7f0;
+    -fx-background-color: #b2622d;
     -fx-background-radius: 10px;
-    -fx-border-width: 4px;
-    -fx-border-color: #172d3e;
-    -fx-border-radius: 7px;
     -fx-background-insets: 2px;
 
     -fx-padding: 10px 20px;
@@ -186,7 +184,68 @@
 }
 
 .button:hover {
-    -fx-background-color: #e4dbd1;
+    -fx-background-color: #8c491a;;
+}
+
+/* ---------- Combo box (matches .button) ---------- */
+
+.combo-box {
+    -fx-background-color: #b2622d;
+    -fx-background-radius: 10px;
+    -fx-background-insets: 2px;
+    -fx-padding: 0;                  /* padding lives on the cell */
+    -fx-cursor: hand;
+}
+
+.combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #fdf7f0;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 4px 10px 20px;
+}
+
+.combo-box > .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 16px 0 8px;
+}
+.combo-box > .arrow-button > .arrow {
+    -fx-background-color: #fdf7f0;
+    -fx-padding: 3px 5px;
+}
+
+.combo-box:hover   { -fx-background-color: #8c491a; }
+.combo-box:showing { -fx-background-color: #643312; }
+.combo-box:disabled { -fx-opacity: 0.45; -fx-cursor: default; }
+.combo-box:focused {
+    -fx-background-color: rgba(178, 98, 45, 0.35), #b2622d;
+    -fx-background-insets: -2, 2;
+    -fx-background-radius: 14, 10;
+}
+
+/* ---------- Dropdown popup ---------- */
+
+.combo-box-popup > .list-view {
+    -fx-background-color: #b2622d, #fdf8ee;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 10, 8;
+    -fx-padding: 3px;
+    -fx-effect: dropshadow(gaussian, rgba(46, 43, 37, 0.28), 16, 0, 0, 6);
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #332f2b;
+    -fx-font-size: 15px;
+    -fx-padding: 9px 18px;
+    -fx-background-radius: 6;
+}
+.combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: rgba(178, 98, 45, 0.16);
+}
+.combo-box-popup .list-cell:filled:selected {
+    -fx-background-color: #b2622d;
+    -fx-text-fill: #fdf7f0;
 }
 
 /* ---------- Progress Bars ---------- */
