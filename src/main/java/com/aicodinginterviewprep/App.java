@@ -21,8 +21,19 @@ public class App extends Application {
     }
 
     private void loadCustomFonts() {
-        Font.loadFont(getClass().getResourceAsStream("/fonts/Figtree-Regular.ttf"), 17);
-        Font.loadFont(getClass().getResourceAsStream("/fonts/JetBrainsMono-Regular.ttf"), 14);
+        try {
+            var figtreeStream = getClass().getResourceAsStream("/fonts/Figtree-Regular.ttf");
+            if (figtreeStream != null) {
+                Font.loadFont(figtreeStream, 17);
+            }
+
+            var jetbrainsStream = getClass().getResourceAsStream("/fonts/JetBrainsMono-Regular.ttf");
+            if (jetbrainsStream != null) {
+                Font.loadFont(jetbrainsStream, 14);
+            }
+        } catch (Exception e) {
+            System.err.println("Warning: Failed to load custom fonts: " + e.getMessage());
+        }
     }
 
     public static void main(String[] args) {
