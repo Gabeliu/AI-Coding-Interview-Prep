@@ -273,15 +273,23 @@ class AuthControllerTest {
     }
 
     @Test
-    void onUsernameDoesNotThrow() throws Exception {
+    void onUsernameMovesFocusToPasswordField() throws Exception {
         runOnFxThreadAndWait(() -> {
             AuthController controller = createController();
             FakeSceneManager sceneManager = new FakeSceneManager();
             controller.setSceneManager(sceneManager);
 
+            Stage stage = new Stage();
+            stage.setScene(new javafx.scene.Scene(new javafx.scene.layout.VBox(
+                controller.textfieldUsername, controller.passwordfieldPassword)));
+            stage.show();
+
             controller.onUsername();
 
-            assertNull(sceneManager.lastScene);
+            assertTrue(controller.passwordfieldPassword.isFocused());
+            assertNull(sceneManager.lastScene, "Pressing Enter in the username field should not navigate away");
+
+            stage.close();
         });
     }
 

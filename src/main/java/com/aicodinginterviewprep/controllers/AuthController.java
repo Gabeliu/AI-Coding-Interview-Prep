@@ -73,7 +73,7 @@ public class AuthController implements SceneAware {
     }
 
     public void onUsername() {
-        // Username field logic
+        (passwordVisible ? textfieldPasswordVisible : passwordfieldPassword).requestFocus();
     }
 
     public void onLogIn() {

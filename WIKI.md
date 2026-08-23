@@ -76,8 +76,11 @@ AI Coding Interview Prep is an AI-supported interview preparation tool that help
 2. Use the included Maven wrapper:
    - Windows: `./mvnw.cmd`
    - macOS/Linux: `./mvnw`
-3. Run the app with `./mvnw javafx:run`.
-4. Run tests with `./mvnw test`.
+3. Copy `.env.example` to `.env` and set `OPENAI_API_KEY` - required for
+   question generation and AI answer evaluation (voice input runs offline
+   and doesn't need this).
+4. Run the app with `./mvnw javafx:run`.
+5. Run tests with `./mvnw test`.
 
 ## Quality Tools
 
