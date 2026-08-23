@@ -24,10 +24,15 @@ AI Coding Interview Prep is an AI-supported interview preparation tool that help
 
 ### Gabriel Liu (@Gabeliu)
 * **Code Contributions:**
+  * Code editor syntax highlighting, voice input, auth fixes, and grading improvements - RichTextFX syntax highlighting, offline speech-to-text voice input on the Practice tab (Vosk, no OpenAI dependency), retry logic for flaky question generation, a stricter AI grading rubric, logged-in user indicator and log out, minimum window size (PR #57, closes #53 and #58)
+  * Wire up sign up and log in to the Authenticator (PR #50)
+  * Add LeetCode practice tab and redesign home/login screens (PR #52)
   * Remove stray editor lock file (PR #31, Issue #30)
   * Add AI-generated interview questions via OpenAI (PR #13, Issue #12)
   * Add initial JavaFX scaffold, Maven wrapper, documentation, and CI workflows (PR #3)
 * **Other Contributions:**
+  * Fix stale README, wiki wording, and fork-PR CI handling; close stale Issue #33, label Issue #26 (PR #59)
+  * Review on PR #56
   * Stop contributors from forking; guard SonarCloud against fork PRs (PR #17, Issue #18)
   * Document early direct-to-main commits as a workflow mistake (PR #7, Issue #6)
   * Revise README with project details and description (PR #1)
