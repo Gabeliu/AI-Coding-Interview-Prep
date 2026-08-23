@@ -19,7 +19,7 @@ import java.nio.file.Path;
  */
 public class SpeechToTextService {
     private static final float SAMPLE_RATE = 16000f;
-    private static final Path DEFAULT_MODEL_PATH = Path.of("models", "vosk-model-small-en-us-0.15");
+    private static final Path DEFAULT_MODEL_PATH = Path.of("models", "vosk-model-en-us-0.22-lgraph");
 
     // Vosk has no built-in silence rejection - a quiet room's background noise
     // still produces some low-confidence guess instead of an empty result. This

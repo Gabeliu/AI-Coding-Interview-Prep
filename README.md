@@ -58,10 +58,10 @@ On macOS/Linux:
 
 The "Record Answer" button transcribes speech offline using Vosk, so it
 works without any OpenAI API access. It needs the speech model present at
-`models/vosk-model-small-en-us-0.15/` in the project root - if that folder
-is missing, download and unzip it from:
+`models/vosk-model-en-us-0.22-lgraph/` in the project root (~200MB) - if
+that folder is missing, download and unzip it from:
 
-https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+https://alphacephei.com/vosk/models/vosk-model-en-us-0.22-lgraph.zip
 
 ## Notes
 
