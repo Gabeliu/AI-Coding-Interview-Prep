@@ -55,3 +55,4 @@ jobs:
             -Dsonar.java.binaries=target/classes
             -Dsonar.java.test.binaries=target/test-classes
             -Dsonar.coverage.exclusions=src/main/java/com/aicodinginterviewprep/App.java
+            -Dsonar.exclusions=src/main/resources/**/*.css,src/main/resources/**/*.fxml
