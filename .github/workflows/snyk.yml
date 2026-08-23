@@ -7,6 +7,11 @@ on:
     branches:
       - main
 
+env:
+  # Team1-SOFTENG310 shared Snyk org - explicit so this doesn't silently
+  # depend on whichever personal account SNYK_TOKEN happens to belong to
+  SNYK_ORG_ID: 6b41770b-b8ed-46b7-a3bd-889fddda4515
+
 jobs:
   snyk:
     runs-on: ubuntu-latest
@@ -34,7 +39,7 @@ jobs:
         run: snyk auth $SNYK_TOKEN
 
       - name: Run Snyk test
-        run: snyk test --all-projects
+        run: snyk test --all-projects --org=$SNYK_ORG_ID
 
       - name: Run Snyk monitor
-        run: snyk monitor --all-projects
+        run: snyk monitor --all-projects --org=$SNYK_ORG_ID
