@@ -1,20 +1,16 @@
 package com.aicodinginterviewprep;
 
-import javax.sound.sampled.AudioFileFormat;
 import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.TargetDataLine;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 
 /**
  * Captures audio from the system microphone on a background thread and hands
- * back a WAV byte array once recording stops, ready to send to a transcription API.
+ * back raw 16kHz mono PCM bytes once recording stops, ready for an offline
+ * speech recognizer such as Vosk.
  */
 public class MicrophoneRecorder {
     private static final AudioFormat AUDIO_FORMAT = new AudioFormat(16000f, 16, 1, true, false);
@@ -55,7 +51,7 @@ public class MicrophoneRecorder {
         captureThread.join();
         line.close();
 
-        return toWavBytes(capturedAudio.toByteArray());
+        return capturedAudio.toByteArray();
     }
 
     public boolean isRecording() {
@@ -69,17 +65,6 @@ public class MicrophoneRecorder {
             if (bytesRead > 0) {
                 capturedAudio.write(chunk, 0, bytesRead);
             }
-        }
-    }
-
-    static byte[] toWavBytes(byte[] pcmData) {
-        try (ByteArrayOutputStream out = new ByteArrayOutputStream();
-             AudioInputStream audioInputStream = new AudioInputStream(
-                 new ByteArrayInputStream(pcmData), AUDIO_FORMAT, pcmData.length / AUDIO_FORMAT.getFrameSize())) {
-            AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, out);
-            return out.toByteArray();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 

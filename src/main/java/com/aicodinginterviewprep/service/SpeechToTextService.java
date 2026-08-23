@@ -1,86 +1,66 @@
 package com.aicodinginterviewprep.service;
 
-import com.aicodinginterviewprep.config.EnvConfig;
 import org.json.JSONObject;
+import org.vosk.LibVosk;
+import org.vosk.LogLevel;
+import org.vosk.Model;
+import org.vosk.Recognizer;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.UUID;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
+/**
+ * Transcribes recorded audio to text entirely offline using Vosk, so this
+ * feature works regardless of what a shared/restricted OpenAI API key allows.
+ * The speech model is loaded lazily on first use since it takes a couple of
+ * seconds to load and would otherwise delay app startup for every user,
+ * even ones who never touch voice input.
+ */
 public class SpeechToTextService {
-    private static final String API_URL = "https://api.openai.com/v1/audio/transcriptions";
-    private static final String MODEL = "whisper-1";
+    private static final float SAMPLE_RATE = 16000f;
+    private static final Path DEFAULT_MODEL_PATH = Path.of("models", "vosk-model-small-en-us-0.15");
 
-    private final HttpClient httpClient;
-    private final String apiKey;
+    private final Path modelPath;
+    private Model model;
 
     public SpeechToTextService() {
-        this(
-            HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(10)).build(),
-            EnvConfig.get("OPENAI_API_KEY"));
+        this(DEFAULT_MODEL_PATH);
     }
 
-    SpeechToTextService(HttpClient httpClient, String apiKey) {
-        this.httpClient = httpClient;
-        this.apiKey = apiKey;
+    SpeechToTextService(Path modelPath) {
+        this.modelPath = modelPath;
     }
 
-    public String transcribe(byte[] wavAudio) throws IOException, InterruptedException {
-        if (apiKey == null || apiKey.isBlank()) {
-            throw new IllegalStateException(
-                "OPENAI_API_KEY is not set. Add it to your local .env file (see .env.example).");
-        }
-        if (wavAudio == null || wavAudio.length == 0) {
+    SpeechToTextService(Model model) {
+        this.modelPath = null;
+        this.model = model;
+    }
+
+    public synchronized String transcribe(byte[] pcmAudio) throws IOException {
+        if (pcmAudio == null || pcmAudio.length == 0) {
             throw new IllegalStateException("No audio was recorded.");
         }
 
-        String boundary = "----AICodingInterviewPrep" + UUID.randomUUID();
-        byte[] body = buildMultipartBody(boundary, wavAudio);
+        ensureModelLoaded();
 
-        HttpRequest request = HttpRequest.newBuilder()
-            .uri(URI.create(API_URL))
-            .timeout(Duration.ofSeconds(30))
-            .header("Authorization", "Bearer " + apiKey)
-            .header("Content-Type", "multipart/form-data; boundary=" + boundary)
-            .POST(HttpRequest.BodyPublishers.ofByteArray(body))
-            .build();
-
-        HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-        if (response.statusCode() != 200) {
-            throw new IllegalStateException(
-                "Transcription request failed (HTTP " + response.statusCode() + "): " + response.body());
+        try (Recognizer recognizer = new Recognizer(model, SAMPLE_RATE)) {
+            recognizer.acceptWaveForm(pcmAudio, pcmAudio.length);
+            return new JSONObject(recognizer.getFinalResult()).getString("text").trim();
         }
-
-        return new JSONObject(response.body()).getString("text").trim();
     }
 
-    static byte[] buildMultipartBody(String boundary, byte[] audioBytes) {
-        try {
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
-            String partPrefix = "--" + boundary + "\r\n";
-
-            out.write((partPrefix
-                + "Content-Disposition: form-data; name=\"model\"\r\n\r\n"
-                + MODEL + "\r\n").getBytes(StandardCharsets.UTF_8));
-
-            out.write((partPrefix
-                + "Content-Disposition: form-data; name=\"file\"; filename=\"recording.wav\"\r\n"
-                + "Content-Type: audio/wav\r\n\r\n").getBytes(StandardCharsets.UTF_8));
-            out.write(audioBytes);
-            out.write("\r\n".getBytes(StandardCharsets.UTF_8));
-
-            out.write(("--" + boundary + "--\r\n").getBytes(StandardCharsets.UTF_8));
-            return out.toByteArray();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+    private void ensureModelLoaded() throws IOException {
+        if (model != null) {
+            return;
         }
+        if (!Files.isDirectory(modelPath)) {
+            throw new IllegalStateException(
+                "Offline speech model not found at " + modelPath.toAbsolutePath()
+                    + ". See README for setup instructions.");
+        }
+
+        LibVosk.setLogLevel(LogLevel.WARNINGS);
+        model = new Model(modelPath.toAbsolutePath().toString());
     }
 }

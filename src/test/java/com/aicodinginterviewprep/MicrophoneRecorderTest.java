@@ -3,7 +3,6 @@ package com.aicodinginterviewprep;
 import org.junit.jupiter.api.Test;
 
 import javax.sound.sampled.TargetDataLine;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -68,7 +67,7 @@ class MicrophoneRecorderTest {
     }
 
     @Test
-    void stopRecording_returnsValidWavBytes() throws Exception {
+    void stopRecording_returnsRawPcmBytesFromTheLine() throws Exception {
         CountDownLatch capturedEnough = new CountDownLatch(1);
         TargetDataLine line = fakeLineProducingBytes(3, capturedEnough);
         MicrophoneRecorder recorder = new MicrophoneRecorder();
@@ -76,11 +75,12 @@ class MicrophoneRecorderTest {
         recorder.startRecording(line);
         assertTrue(capturedEnough.await(2, TimeUnit.SECONDS), "expected at least 3 reads before stopping");
 
-        byte[] wav = recorder.stopRecording();
+        byte[] pcm = recorder.stopRecording();
 
-        assertTrue(wav.length > 44, "WAV output should be larger than the 44-byte header");
-        assertEquals("RIFF", new String(wav, 0, 4, StandardCharsets.US_ASCII));
-        assertEquals("WAVE", new String(wav, 8, 4, StandardCharsets.US_ASCII));
+        assertTrue(pcm.length >= 300, "expected at least 3 reads worth of captured bytes");
+        for (byte sample : pcm) {
+            assertEquals(1, sample);
+        }
     }
 
     private TargetDataLine fakeLineProducingBytes(int minCalls) {

@@ -54,6 +54,15 @@ On macOS/Linux:
 ./mvnw test
 ```
 
+## Voice input (Practice tab)
+
+The "Record Answer" button transcribes speech offline using Vosk, so it
+works without any OpenAI API access. It needs the speech model present at
+`models/vosk-model-small-en-us-0.15/` in the project root - if that folder
+is missing, download and unzip it from:
+
+https://alphacephei.com/vosk/models/vosk-model-small-en-us-0.15.zip
+
 ## Notes
 
 - This is setup-only scaffolding for the project; feature implementation can be added on top of this structure.
