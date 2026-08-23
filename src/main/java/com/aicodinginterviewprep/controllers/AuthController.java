@@ -3,6 +3,7 @@ package com.aicodinginterviewprep.controllers;
 import com.aicodinginterviewprep.Authenticator;
 import com.aicodinginterviewprep.SceneAware;
 import com.aicodinginterviewprep.SceneManager;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
@@ -29,11 +30,14 @@ public class AuthController implements SceneAware {
     public Hyperlink linkTogglePassword;
     public Label labelMessage;
 
+    @FXML private void initialize() {
+        this.buttonLogIn.getStyleClass().add("btn-primary");
+        this.buttonReturn.getStyleClass().add("btn-primary");
+    }
+
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
-        this.buttonLogIn.getStyleClass().add("btn-primary");
-        this.buttonReturn.getStyleClass().add("btn-primary");
         this.authenticator = new Authenticator(ACCOUNTS_FILE);
         textfieldPasswordVisible.textProperty().bindBidirectional(passwordfieldPassword.textProperty());
         textfieldPasswordVisible.setVisible(false);

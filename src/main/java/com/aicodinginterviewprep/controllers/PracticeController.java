@@ -25,13 +25,16 @@ public class PracticeController implements SceneAware {
     @FXML public Button buttonCodingPractice;
     @FXML public ComboBox<QuestionType> comboQuestionType;
 
-    @Override
-    public void setSceneManager(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
+    @FXML private void initialize() {
         this.buttonSubmitAnswer.getStyleClass().add("btn-primary");
         this.buttonReturn.getStyleClass().add("btn-primary");
         this.questionOutput.getStyleClass().add("question-area");
         this.answerInput.getStyleClass().add("answer-area");
+    }
+
+    @Override
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
         this.comboQuestionType.getItems().addAll(QuestionType.BEHAVIOURAL, QuestionType.THEORY);
         this.comboQuestionType.setValue(QuestionType.BEHAVIOURAL);
     }

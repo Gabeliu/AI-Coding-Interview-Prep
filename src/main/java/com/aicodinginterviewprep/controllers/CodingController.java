@@ -25,13 +25,16 @@ public class CodingController implements SceneAware {
     @FXML public Button buttonGenerateQuestion;
     @FXML public Button buttonPractice;
 
-    @Override
-    public void setSceneManager(SceneManager sceneManager) {
-        this.sceneManager = sceneManager;
+    @FXML private void  initialize() {
         this.buttonReturn.getStyleClass().add("btn-primary");
         this.buttonSubmitAnswer.getStyleClass().add("btn-primary");
         this.questionOutput.getStyleClass().add("question-area");
         this.codeEditor.getStyleClass().add("code-area");
+    }
+
+    @Override
+    public void setSceneManager(SceneManager sceneManager) {
+        this.sceneManager = sceneManager;
     }
 
     @FXML

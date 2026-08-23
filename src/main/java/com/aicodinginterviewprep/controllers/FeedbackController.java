@@ -5,6 +5,7 @@ import com.aicodinginterviewprep.SceneAware;
 import com.aicodinginterviewprep.SceneManager;
 import com.aicodinginterviewprep.openai.EvaluationResult;
 import javafx.application.Platform;
+import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextInputControl;
@@ -22,10 +23,13 @@ public class FeedbackController implements SceneAware {
     private TextInputControl answerInput;
     private String returnScene = "practice";
 
+    @FXML private void initialize() {
+        this.buttonTryAgain.getStyleClass().add("btn-primary");
+    }
+
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
-        this.buttonTryAgain.getStyleClass().add("btn-primary");
     }
 
     public void setAnswerControls(TextArea questionOutput, TextArea codeEditor, TextInputControl answerInput) {

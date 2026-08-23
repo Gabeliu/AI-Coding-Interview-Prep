@@ -10,10 +10,13 @@ public class HomeController implements SceneAware {
 
     @FXML public Button buttonGetStarted;
 
+    @FXML private void initialize() {
+        this.buttonGetStarted.getStyleClass().add("btn-primary");
+    }
+
     @Override
     public void setSceneManager(SceneManager sceneManager) {
         this.sceneManager = sceneManager;
-        this.buttonGetStarted.getStyleClass().add("btn-primary");
     }
 
     @FXML
