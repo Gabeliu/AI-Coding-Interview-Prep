@@ -8,3 +8,6 @@ target/
 .vscode/
 .env
 SE310_Assignment1_2026.pdf
+
+# Vosk speech model - large binary, download separately (see README)
+models/
