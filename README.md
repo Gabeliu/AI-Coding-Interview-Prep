@@ -24,6 +24,17 @@ This repository contains the setup scaffolding for the SOFTENG 310 A1 project.
 - Java 17 JDK installed
 - Maven wrapper is included; a separate Maven install is optional
 
+## Fonts
+
+This project bundles custom fonts to ensure consistent styling across all environments:
+
+- **Figtree** (Regular): Used for body text and input areas (sans-serif)
+- **JetBrains Mono** (Regular): Used for code editor (monospace)
+
+Font files are stored in `src/main/resources/fonts/` and are loaded programmatically in `App.java` before the UI is rendered. This ensures all team members see the same fonts regardless of their system configuration.
+
+**To update fonts:** Replace the `.ttf` files in `src/main/resources/fonts/` and update the corresponding `Font.loadFont()` call in `App.java`.
+
 ## Run the application
 
 From the project root:

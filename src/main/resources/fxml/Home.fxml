@@ -19,7 +19,12 @@
                <Font name="Bodoni MT" size="30.0" />
             </font>
          </Label>
-         <Label alignment="CENTER" text="Welcome to AI Coding Interview Prep!" />
+         <Label alignment="CENTER" text="Welcome to AI Coding Interview Prep!">
+            <font>
+               <Font name="Figtree" size="18.0" />
+            </font>
+            <style>-fx-font-weight: bold;</style>
+         </Label>
          <Label alignment="CENTER" text="Go to Practice to answer coding questions and receive AI feedback." wrapText="true" />
          <Label alignment="CENTER" text="Login or register to save progress in later assignments." wrapText="true" />
          <HBox alignment="CENTER" spacing="20">

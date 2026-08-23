@@ -2,6 +2,8 @@
  * Warm, modern theme for a JavaFX interview practice application.
  */
 
+/* Fonts are loaded programmatically in App.java before UI rendering */
+
 .root {
     /* tokens — declare once, inherited by every descendant */
     -color-bg:      #f5ead8;
