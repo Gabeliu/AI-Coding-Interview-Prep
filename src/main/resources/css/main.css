@@ -11,7 +11,8 @@
     -color-divider: rgba(32, 30, 29, 0.16);   /* the color-mix line, precomputed */
 
     /* applied */
-    -fx-background-color: -color-bg;
+    -fx-background-color: linear-gradient(to bottom right,
+    #f5ead8 0%, #f5ead8 58%, #eee0c9 58%, #eee0c9 100%);
     -fx-text-fill: -color-text;
     -fx-font-family: "Figtree", "Segoe UI", sans-serif;
     -fx-font-size: 17px;
