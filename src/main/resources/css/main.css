@@ -77,31 +77,74 @@
 }
 
 
-/* ---------- Text Areas ---------- */
+/* ---------- Text areas: shared base ---------- */
 
 .text-area {
-    -fx-background-color: #fffdf9;
-    -fx-control-inner-background: #fffdf9;
+    -fx-control-inner-background: #fffdf9;   /* the .content reads this */
+    -fx-background-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0;
     -fx-text-fill: #332f2b;
-
-    -fx-border-color: #ded6cc;
-    -fx-border-width: 1px;
-    -fx-border-radius: 8px;
-    -fx-background-radius: 8px;
-
-    -fx-padding: 10px;
-
-    -fx-focus-color: transparent;
-    -fx-faint-focus-color: transparent;
+    -fx-prompt-text-fill: #a19786;
+    -fx-highlight-fill: rgba(178, 98, 45, 0.25);
+    -fx-highlight-text-fill: #2e2b25;
 }
 
+.text-area > .scroll-pane { -fx-background-color: transparent; }
+.text-area > .scroll-pane > .viewport { -fx-background-color: transparent; }
+.text-area .content { -fx-background-color: -fx-control-inner-background; }
 
-.text-area .content {
-    -fx-background-color: #fffdf9;
+/* ---------- Question area: document, not control ---------- */
+
+.question-area {
+    -fx-control-inner-background: transparent;
+    -fx-background-color: #b2622d, #fdf8ee;
+    -fx-background-insets: 0, 0 0 0 4;
+    -fx-background-radius: 8, 0 8 8 0;
+    -fx-font-family: "Georgia", "Iowan Old Style", serif;
+    -fx-font-size: 17px;
+    -fx-text-fill: #2e2b25;
+}
+.question-area .content { -fx-padding: 16px 20px; }
+.question-area:focused  { -fx-background-color: #b2622d, #fdf8ee; }
+
+/* ---------- Answer box: prose input ---------- */
+
+.answer-area {
+    -fx-control-inner-background: #fffdf9;
+    -fx-background-color: #ded6cc, #fffdf9;
+    -fx-background-insets: 0, 1;
+    -fx-background-radius: 8, 7;
+    -fx-font-family: "Figtree", "Segoe UI", sans-serif;
+    -fx-font-size: 15px;
+}
+.answer-area .content  { -fx-padding: 12px 14px; }
+.answer-area:hover     { -fx-background-color: #c9beac, #fffdf9; }
+.answer-area:focused {
+    -fx-background-color: rgba(178, 98, 45, 0.30), #b2622d, #fffdf9;
+    -fx-background-insets: -3, 0, 1;
+    -fx-background-radius: 11, 8, 7;
 }
 
-.question-label {
-    -fx-font-size: 18px;
+/* ---------- Code editor ---------- */
+
+.code-area {
+    -fx-control-inner-background: #262320;
+    -fx-background-color: #17140f, #262320;
+    -fx-background-insets: 0, 2;
+    -fx-background-radius: 10, 8;
+    -fx-font-family: "JetBrains Mono", "Cascadia Mono", "Consolas", monospace;
+    -fx-font-size: 14px;
+    -fx-text-fill: #ede4d4;
+    -fx-highlight-fill: rgba(246, 160, 107, 0.30);
+    -fx-highlight-text-fill: #fff6ea;
+    -fx-prompt-text-fill: #7a7268;
+}
+.code-area .content { -fx-padding: 14px 16px; }
+.code-area:focused {
+    -fx-background-color: rgba(246, 160, 107, 0.35), #b2622d, #262320;
+    -fx-background-insets: -3, 0, 2;
+    -fx-background-radius: 13, 10, 8;
 }
 
 /* ---------- Text Fields ---------- */

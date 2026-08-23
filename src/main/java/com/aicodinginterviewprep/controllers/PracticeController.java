@@ -30,6 +30,8 @@ public class PracticeController implements SceneAware {
         this.sceneManager = sceneManager;
         this.buttonSubmitAnswer.getStyleClass().add("btn-primary");
         this.buttonReturn.getStyleClass().add("btn-primary");
+        this.questionOutput.getStyleClass().add("question-area");
+        this.answerInput.getStyleClass().add("answer-area");
         this.comboQuestionType.getItems().addAll(QuestionType.BEHAVIOURAL, QuestionType.THEORY);
         this.comboQuestionType.setValue(QuestionType.BEHAVIOURAL);
     }

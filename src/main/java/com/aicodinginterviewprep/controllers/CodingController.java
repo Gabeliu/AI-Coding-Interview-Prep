@@ -30,6 +30,8 @@ public class CodingController implements SceneAware {
         this.sceneManager = sceneManager;
         this.buttonReturn.getStyleClass().add("btn-primary");
         this.buttonSubmitAnswer.getStyleClass().add("btn-primary");
+        this.questionOutput.getStyleClass().add("question-area");
+        this.codeEditor.getStyleClass().add("code-area");
     }
 
     @FXML
