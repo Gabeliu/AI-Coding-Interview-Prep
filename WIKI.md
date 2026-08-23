@@ -95,7 +95,7 @@ AI Coding Interview Prep is an AI-supported interview preparation tool that help
 - CONTRIBUTING.md: contribution process
 - TASKS.md: A1 tasks and A2 vision
 - Issue templates: bug report and feature request
-- Wiki: this page can be copied into the GitHub wiki
+- Wiki: this page is published on the [GitHub wiki](../../wiki) and mirrored here as `WIKI.md`
 
 ## Workflow Notes
 
