@@ -120,3 +120,11 @@ own use of generative AI tools below.
   existing code. All AI-assisted output was reviewed and tested before being
   committed.
 
+- **Dandan Wu**: Used ChatGPT for: 
+  1: Analysing error messages and locating affected classes.
+  2: Find xvfb solution to avoid SonarCloud running forever.
+  3: Finding a method to fake Ai service without changing initial controller
+  code. 
+  4: Generated follow up test cases from initially written test cases.
+  5: Explanation of why unable to achieve particular branch for coverage. 
+  All AI-assisted output was reviewed and tested before committed.
