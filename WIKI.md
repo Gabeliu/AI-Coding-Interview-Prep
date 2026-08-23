@@ -108,3 +108,25 @@ PR #25 also was not merged with squash and merge, causing main branch consisting
 A full scan of the project on `main` confirmed no open vulnerabilities:
 
 ![Snyk Clean Scan](images/snyk-clean-scan.png)
+
+## Meeting Minutes
+
+**Cadence:** In-person every Monday after lecture; online every Thursday at 7pm.
+
+Each entry below should record: date and format (in-person/online), who attended,
+topics discussed, decisions made (especially any change to how we manage the
+project - workflow, labels, review process, scope), issues/PRs referenced, and
+action items for the next meeting.
+
+### Template
+
+```
+### YYYY-MM-DD (In-person / Online)
+**Attendees:** 
+**Topics discussed:** 
+**Decisions made:** 
+**Issues/PRs referenced:** 
+**Action items:** 
+```
+
+<!-- Add one entry per meeting above this line, most recent first. -->
