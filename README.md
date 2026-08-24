@@ -139,3 +139,5 @@ own use of generative AI tools below.
   controller classes. All AI-assisted output was reviewed and tested before being committed.
 
 - **Shenol Peiris**: Used Gemini for initial brainstorming evaluation architecture, and Used it to help with test cases, for debugging issues. All AI-assisted output was reviewed and tested before being committed.
+
+- **Dylan Liddle**: Used Claude for planning and integrating the coding questions tab and the related UI / answering panels. Used claude to generate test cases for relevant .java classes. All AI-assisted output was reviewed and tested before being committed.
