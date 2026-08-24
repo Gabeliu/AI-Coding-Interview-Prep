@@ -128,3 +128,8 @@ own use of generative AI tools below.
   4: Generated follow up test cases from initially written test cases.
   5: Explanation of why unable to achieve particular branch for coverage. 
   All AI-assisted output was reviewed and tested before committed.
+
+  - **Scott Wallace**: Used Copilot for assissting in planning integration of some features, and in troubleshooting issues.
+    The primary use of AI was in assisting in refactoring the core SceneManager class and its implementations without breaking existing code.
+    It was also used in troubleshooting to diagnose issues, and to generate roughly half of the test cases added by me.
+    All AI-assisted output was reviewed and tested before committing.

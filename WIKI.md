@@ -14,11 +14,13 @@ AI Coding Interview Prep is an AI-supported interview preparation tool that help
 
 ### Scott Wallace (@Swal289)
 * **Code Contributions:**
+  * Created Authenticator class and integrated it with the app (PR #34, #54, Issue #33)
   * Improved UI Design (PR #22, Issue #21)
   * Created draft UI appearance using stylesheets. (PR #10)
   * Created draft scenes (PR #9)
   * adjusted practice tab style and width (PR #5)
 * **Other Contributions:**
+  * Review on PR #62
   * Review on PR #17
   * Review on PR #16
 
@@ -131,6 +133,13 @@ action items for the next meeting.
 
 ### DD-MM-YYYY (In-person / Online)
 **Attendees:**<br>
+**Topics discussed:** <br>
+**Decisions made:** <br>
+**Issues/PRs referenced:** <br>
+**Action items:** <br>
+
+### 24-08-2026 (In-person)
+**Attendees:**Scott, Neia<br>
 **Topics discussed:** <br>
 **Decisions made:** <br>
 **Issues/PRs referenced:** <br>
