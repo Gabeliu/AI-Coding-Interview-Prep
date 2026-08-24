@@ -11,7 +11,7 @@
 - Add starter issue for Sonar/Snyk setup
 - Create GitHub issues for each envisioned feature and task, as required by the assignment
 - Integrate OpenAI for question generation and response evaluation
-- Add user account persistence and secure registration/login
+- Add local user account persistence and registration/login
 
 ## A2 Vision
 

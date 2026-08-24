@@ -150,7 +150,7 @@ action items for the next meeting.
 **Topics discussed:** Integrating Coding tab. adding voice input and fixing user authentication<br>
 **Decisions made:** Voice input will run offline and will not need API key. User authentication will be done locally for now. coding tab current is plain, so we decided to style it up.<br>
 **Issues/PRs referenced:** PR #28, PR #52<br>
-**Action items:** Try and finalise the app and do the github release and submit repo link to the submuission.
+**Action items:** Try and finalise the app and do the GitHub release and submit the repository link with the submission.
 
 ### 17-08-2026 (In-person)
 **Attendees:** Dylan, Scott, Shenol, Neia, Gabriel, Kenny<br>
