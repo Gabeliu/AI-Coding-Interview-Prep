@@ -137,3 +137,5 @@ own use of generative AI tools below.
 - **Neia Tererei**: Used Claude for planning interface design and controller infrastructure; used it
   to construct CSS styling for fxml scenes; and used it for generating test cases on relevant
   controller classes. All AI-assisted output was reviewed and tested before being committed.
+
+- **Shenol Peiris**: Used Gemini for initial brainstorming evaluation architecture, and Used it to help with test cases, for debugging issues. All AI-assisted output was reviewed and tested before being committed.
