@@ -129,7 +129,15 @@ own use of generative AI tools below.
   5: Explanation of why unable to achieve particular branch for coverage. 
   All AI-assisted output was reviewed and tested before committed.
 
-  - **Scott Wallace**: Used Copilot for assissting in planning integration of some features, and in troubleshooting issues.
+ - **Scott Wallace**: Used Copilot for assissting in planning integration of some features, and in troubleshooting issues.
     The primary use of AI was in assisting in refactoring the core SceneManager class and its implementations without breaking existing code.
     It was also used in troubleshooting to diagnose issues, and to generate roughly half of the test cases added by me.
     All AI-assisted output was reviewed and tested before committing.
+
+- **Neia Tererei**: Used Claude for planning interface design and controller infrastructure; used it
+  to construct CSS styling for fxml scenes; and used it for generating test cases on relevant
+  controller classes. All AI-assisted output was reviewed and tested before being committed.
+
+- **Shenol Peiris**: Used Gemini for initial brainstorming evaluation architecture, and Used it to help with test cases, for debugging issues. All AI-assisted output was reviewed and tested before being committed.
+
+- **Dylan Liddle**: Used Claude for planning and integrating the coding questions tab and the related UI / answering panels. Used claude to generate test cases for relevant .java classes. All AI-assisted output was reviewed and tested before being committed.
