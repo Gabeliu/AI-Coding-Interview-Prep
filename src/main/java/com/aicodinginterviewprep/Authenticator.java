@@ -12,6 +12,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 
+//
+
 public class Authenticator {
 
     private final String fileName;
@@ -77,7 +79,7 @@ public class Authenticator {
             throw new IllegalArgumentException("Username and password cannot be null");
         }
         for (UserProfile userProfile : userProfiles) { // Checks if the account already exists
-            if (userProfile.nameAndPasswordMatch(username, password)) {
+            if (userProfile.getUsername().equals(username)) {
                 throw new IllegalArgumentException("Account already exists");
             }
         }
